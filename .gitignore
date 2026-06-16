@@ -23,9 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Local env files
+# Env files
 .env
 .env.local
 .env.*
-**/node_modules
-**/dist
