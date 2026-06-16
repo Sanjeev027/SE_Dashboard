@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { UserCog, Trash2, Mail, Shield, Search, RefreshCcw, Globe } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
@@ -11,7 +12,7 @@ export default function UserManagement() {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:5000/api/users");
+            const res = await axios.get(`${API_URL}/api/users`);
             setUsers(res.data);
         } catch (err) {
             console.error("Error fetching users", err);
@@ -26,7 +27,7 @@ export default function UserManagement() {
 
     const handleUpdateUser = async (id, role, university) => {
         try {
-            await axios.put(`http://localhost:5000/api/users/${id}`, { role, university });
+            await axios.put(`${API_URL}/api/users/${id}`, { role, university });
             fetchUsers();
         } catch (err) {
             alert("Error updating user");
@@ -36,7 +37,7 @@ export default function UserManagement() {
     const handleDeleteUser = async (id) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/users/${id}`);
+            await axios.delete(`${API_URL}/api/users/${id}`);
             fetchUsers();
         } catch (err) {
             alert("Error deleting user");

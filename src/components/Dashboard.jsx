@@ -30,6 +30,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
 import logoImg from "../assets/niat.jpg";
+import { API_URL } from "../config";
 
 const getColorClasses = (color) => {
     const maps = {
@@ -142,7 +143,7 @@ export default function Dashboard() {
 
     const fetchReports = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/events/reports/all");
+            const res = await axios.get(`${API_URL}/api/events/reports/all`);
             setReports(res.data);
         } catch (err) {
             console.error("Error fetching reports", err);
@@ -151,7 +152,7 @@ export default function Dashboard() {
 
     const fetchEvents = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/api/events");
+            const res = await axios.get(`${API_URL}/api/events`);
             // Transform array to grouped object { "YYYY-MM-DD": [...] }
             const grouped = res.data.reduce((acc, event) => {
                 const startStr = event.date.split('T')[0];
@@ -198,7 +199,7 @@ export default function Dashboard() {
             // Fetch latest user details to sync with any database updates (e.g. university assignment)
             const syncUser = async () => {
                 try {
-                    const res = await axios.get(`http://localhost:5000/api/users/${parsedUser.id}`);
+                    const res = await axios.get(`${API_URL}/api/users/${parsedUser.id}`);
                     const latestUser = {
                         id: res.data.id,
                         loginId: res.data.loginId || res.data.login_id,
@@ -320,7 +321,7 @@ export default function Dashboard() {
         };
 
         try {
-            await axios.post("http://localhost:5000/api/events", eventData);
+            await axios.post(`${API_URL}/api/events`, eventData);
             fetchEvents();
             setNewTitle("");
             setIsEventModalOpen(false);
@@ -331,7 +332,7 @@ export default function Dashboard() {
 
     const handleDeleteEvent = async (eventId) => {
         try {
-            await axios.delete(`http://localhost:5000/api/events/${eventId}`);
+            await axios.delete(`${API_URL}/api/events/${eventId}`);
             fetchEvents();
         } catch (err) {
             alert("Error deleting event");
@@ -420,7 +421,7 @@ export default function Dashboard() {
                 driveLink: reportDriveLinkText
             });
 
-            await axios.post(`http://localhost:5000/api/events/${selectedEventForReport.id}/report`, {
+            await axios.post(`${API_URL}/api/events/${selectedEventForReport.id}/report`, {
                 reportContent: serializedContent,
                 university: uniToSubmit
             });

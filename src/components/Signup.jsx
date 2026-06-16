@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { Lock, User, Mail, UserPlus, AlertCircle, CheckCircle, Globe, Sun, Moon } from "lucide-react";
 import logoImg from "../assets/niat.jpg";
+import { API_URL } from "../config";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function Signup() {
       setError("");
       setSuccess("");
 
-      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+      const res = await axios.post(`${API_URL}/api/auth/signup`, {
         loginId: loginId.trim(),
         email: email.trim(),
         password: password.trim(),
