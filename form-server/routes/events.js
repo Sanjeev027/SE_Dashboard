@@ -1,65 +1,119 @@
 const express = require("express");
-const db = require("../db");
+const supabase = require("../db");
 const router = express.Router();
 
 // Get all events
-router.get("/", (req, res) => {
-    const sql = "SELECT * FROM events ORDER BY date ASC";
-    db.query(sql, (err, result) => {
-        if (err) return res.status(500).json({ message: "Database error" });
-        res.json(result.rows);
-    });
+router.get("/", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("date", { ascending: true });
+
+    if (error) return res.status(500).json({ message: "Database error" });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Get Events Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // Add a new event
-router.post("/", (req, res) => {
-    const { title, type, university, date, end_date, color } = req.body;
-    const sql = "INSERT INTO events (title, type, university, date, end_date, color) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id";
-    db.query(sql, [title, type, university, date, end_date || date, color], (err, result) => {
-        if (err) {
-            console.error("Add Event Error:", err);
-            return res.status(500).json({ message: "Database error" });
-        }
-        res.json({ message: "Event added", id: result.rows[0].id });
-    });
+router.post("/", async (req, res) => {
+  const { title, type, university, date, end_date, color } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from("events")
+      .insert([{
+        title,
+        type,
+        university,
+        date,
+        end_date: end_date || date,
+        color
+      }])
+      .select("id");
+
+    if (error) {
+      console.error("Add Event Error:", error);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json({ message: "Event added", id: data[0].id });
+  } catch (error) {
+    console.error("Add Event Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // Delete an event
-router.delete("/:id", (req, res) => {
-    const { id } = req.params;
-    const sql = "DELETE FROM events WHERE id = $1";
-    db.query(sql, [id], (err, result) => {
-        if (err) return res.status(500).json({ message: "Database error" });
-        res.json({ message: "Event deleted" });
-    });
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from("events")
+      .delete()
+      .eq("id", id);
+
+    if (error) return res.status(500).json({ message: "Database error" });
+
+    res.json({ message: "Event deleted" });
+  } catch (error) {
+    console.error("Delete Event Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // Get all event reports
-router.get("/reports/all", (req, res) => {
-    const sql = "SELECT * FROM reports";
-    db.query(sql, (err, result) => {
-        if (err) return res.status(500).json({ message: "Database error" });
-        res.json(result.rows);
-    });
+router.get("/reports/all", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reports")
+      .select("*");
+
+    if (error) return res.status(500).json({ message: "Database error" });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Get Reports Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // Submit report for an event
-router.post("/:id/report", (req, res) => {
-    const { id } = req.params;
-    const { reportContent, university } = req.body;
-    
-    if (!university) {
-        return res.status(400).json({ message: "University is required" });
+router.post("/:id/report", async (req, res) => {
+  const { id } = req.params;
+  const { reportContent, university } = req.body;
+
+  if (!university) {
+    return res.status(400).json({ message: "University is required" });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("reports")
+      .upsert(
+        {
+          event_id: id,
+          university: university,
+          report_content: reportContent
+        },
+        { onConflict: "event_id,university" }
+      );
+
+    if (error) {
+      console.error("Submit Report Error:", error);
+      return res.status(500).json({ message: "Database error" });
     }
 
-    const sql = "INSERT INTO reports (event_id, university, report_content) VALUES ($1, $2, $3) ON CONFLICT (event_id, university) DO UPDATE SET report_content = $3";
-    db.query(sql, [id, university, reportContent], (err, result) => {
-        if (err) {
-            console.error("Submit Report Error:", err);
-            return res.status(500).json({ message: "Database error" });
-        }
-        res.json({ message: "Report submitted successfully" });
-    });
+    res.json({ message: "Report submitted successfully" });
+  } catch (error) {
+    console.error("Submit Report Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;

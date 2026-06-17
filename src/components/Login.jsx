@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import { Lock, LogIn, User, AlertCircle, Sun, Moon } from "lucide-react";
-import logoImg from "../assets/niat.jpg";
+import { Lock, LogIn, User, AlertCircle, Sun, Moon, GraduationCap } from "lucide-react";
 import { API_URL } from "../config";
 
 export default function Login() {
@@ -77,8 +76,8 @@ export default function Login() {
       >
         {/* Brand/Logo Header */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 bg-[#161b22]/90 border border-gray-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/10 mb-3 p-2">
-            <img src={logoImg} alt="NIAT Logo" className="w-full h-full object-contain" />
+          <div className="w-12 h-12 bg-[#161b22]/90 border border-gray-800 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/10 mb-3 text-red-500">
+            <GraduationCap size={24} />
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-gray-100">Portal Login</h2>
           <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">Academia_HuB Control Center</p>

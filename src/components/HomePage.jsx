@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Sun, Moon } from "lucide-react";
-import logoImg from "../assets/niat.jpg";
+import { ArrowRight, Sun, Moon, GraduationCap } from "lucide-react";
 
 // Generate 20 random particles that will float upwards in the background
 const particles = Array.from({ length: 20 }).map((_, i) => ({
@@ -109,9 +108,9 @@ export default function HomePage() {
             scale: { duration: 3, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" },
             opacity: { duration: 0.6 }
           }}
-          className="w-20 h-20 bg-[#161b22]/90 border border-gray-800 rounded-3xl flex items-center justify-center shadow-2xl shadow-red-600/10 mb-8 p-3.5"
+          className="w-20 h-20 bg-[#161b22]/90 border border-gray-800 rounded-3xl flex items-center justify-center shadow-2xl shadow-red-600/10 mb-8 text-red-500"
         >
-          <img src={logoImg} alt="NIAT Logo" className="w-full h-full object-contain" />
+          <GraduationCap size={40} />
         </motion.div>
 
         {/* Brand Header */}

@@ -29,7 +29,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
-import logoImg from "../assets/niat.jpg";
 import { API_URL } from "../config";
 
 const getColorClasses = (color) => {
@@ -460,8 +459,8 @@ export default function Dashboard() {
             >
                 <div className="flex items-center justify-between mb-10 px-2">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#1c2128] border border-gray-800 rounded-lg flex items-center justify-center shadow-lg shadow-red-600/5 p-1.5">
-                            <img src={logoImg} alt="NIAT Logo" className="w-full h-full object-contain" />
+                        <div className="w-10 h-10 bg-[#1c2128] border border-gray-800 rounded-lg flex items-center justify-center shadow-lg shadow-red-600/5 text-red-500">
+                            <GraduationCap size={20} />
                         </div>
                         <h1 className="text-xl font-bold tracking-tight">Academia_HuB</h1>
                     </div>
@@ -855,7 +854,9 @@ export default function Dashboard() {
                             {/* University Header / Select Tabs */}
                             <div>
                                 <h2 className="text-xl sm:text-3xl font-black mb-4 flex items-center gap-2">
-                                    <img src={logoImg} alt="NIAT Logo" className="w-8 h-8 object-contain" />
+                                    <span className="text-red-500">
+                                        <GraduationCap size={24} />
+                                    </span>
                                     University Portals
                                 </h2>
                                 <p className="text-sm text-gray-500">Track and filter day-wise activities, circulars, and events per university campus.</p>
@@ -890,7 +891,7 @@ export default function Dashboard() {
                                 <div className="bg-[#161b22]/50 border border-gray-800 rounded-3xl p-6 flex flex-col gap-6">
                                     <div className="w-full h-32 rounded-2xl bg-gradient-to-br from-red-700/20 to-amber-600/20 flex items-center justify-center relative overflow-hidden border border-red-500/10">
                                         <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-2xl" />
-                                        <img src={logoImg} alt="NIAT Logo" className="w-12 h-12 object-contain relative z-10 animate-pulse" />
+                                        <GraduationCap size={48} className="relative z-10 animate-pulse text-red-500" />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-100">{selectedUniTab}</h3>
