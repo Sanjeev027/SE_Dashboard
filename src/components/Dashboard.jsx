@@ -277,6 +277,16 @@ export default function Dashboard() {
         if (!day) return;
         const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         setSelectedDate(d);
+
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(d.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${dayStr}`;
+        
+        setNewEventDate(formattedDate);
+        setNewEventEndDate(formattedDate);
+        setNewUniversity(isCentral ? "All Universities" : user?.university || "");
+        setIsEventModalOpen(true);
     };
 
     const handleAddEvent = async () => {
