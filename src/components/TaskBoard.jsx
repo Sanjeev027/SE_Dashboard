@@ -108,7 +108,7 @@ export default function TaskBoard() {
 
     return (
         <div className="flex flex-col h-full bg-transparent text-white overflow-hidden w-full">
-            <div className="flex items-center justify-between p-4 sm:p-8 shrink-0">
+            <div className="flex items-center justify-between p-4 sm:p-8 shrink-0 pb-4">
                 <div>
                     <h2 className="text-xl sm:text-3xl font-black mb-2 flex items-center gap-2">
                         <LayoutList className="text-red-500" size={32} />
@@ -123,6 +123,41 @@ export default function TaskBoard() {
                     <Plus size={18} />
                     <span>Raise Task</span>
                 </button>
+            </div>
+
+            {/* Stats Counter Grid */}
+            <div className="px-4 sm:px-8 shrink-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 sm:mb-8">
+                    <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total Tasks</p>
+                            <p className="text-2xl font-black text-white">{filteredTasks.length}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
+                            <LayoutList size={20} />
+                        </div>
+                    </div>
+
+                    <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-green-500/30">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Completed Tasks</p>
+                            <p className="text-2xl font-black text-white">{filteredTasks.filter(t => t.status === "Completed").length}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-500">
+                            <CheckCircle2 size={20} />
+                        </div>
+                    </div>
+
+                    <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-amber-500/30">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Pending Tasks</p>
+                            <p className="text-2xl font-black text-white">{filteredTasks.filter(t => t.status === "Pending").length}</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                            <Clock size={20} />
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {loading ? (
