@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import {
@@ -83,6 +83,58 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
         <span className="font-medium">{label}</span>
     </motion.div>
 );
+
+const CustomSelect = ({ value, onChange, options, placeholder = "Select Option" }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (selectRef.current && !selectRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div ref={selectRef} className="relative w-full">
+            <div 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none hover:border-red-600/50 focus:border-red-600 transition-colors text-sm sm:text-base flex justify-between items-center cursor-pointer select-none"
+            >
+                <span className="capitalize">{value || placeholder}</span>
+                <ChevronDown size={18} className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-red-500" : "text-gray-500"}`} />
+            </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute z-50 w-full mt-2 bg-[#161b22] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl py-2"
+                    >
+                        {options.map((opt) => {
+                            const optValue = typeof opt === 'object' ? opt.value : opt;
+                            const optLabel = typeof opt === 'object' ? opt.label : opt;
+                            return (
+                                <div
+                                    key={optValue}
+                                    onClick={() => { onChange(optValue); setIsOpen(false); }}
+                                    className={`px-4 py-3 text-sm sm:text-base cursor-pointer transition-all hover:bg-red-600/10 hover:text-red-500 flex items-center select-none ${value === optValue ? "bg-red-600/10 text-red-500 font-medium border-l-2 border-red-600" : "text-gray-300 border-l-2 border-transparent"}`}
+                                >
+                                    {optLabel}
+                                </div>
+                            );
+                        })}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -1253,28 +1305,19 @@ export default function Dashboard() {
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type</label>
-                                    <select value={newType} onChange={(e) => setNewType(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none focus:border-red-600 transition-colors text-sm sm:text-base">
-                                        <option>Circular</option>
-                                        <option>Co-Circular</option>
-                                        <option>Extra-Circular</option>
-                                        <option>Cultural Activities</option>
-                                        <option>Other</option>
-                                    </select>
+                                    <CustomSelect 
+                                        value={newType} 
+                                        onChange={setNewType} 
+                                        options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} 
+                                    />
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University</label>
-                                    <select value={newUniversity} onChange={(e) => setNewUniversity(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none focus:border-red-600 text-sm sm:text-base">
-                                        {isCentral ? (
-                                            <>
-                                                <option>All Universities</option>
-                                                <option>VGU</option>
-                                                <option>SGU</option>
-                                                <option>ADYPU</option>
-                                            </>
-                                        ) : (
-                                            <option>{user.university}</option>
-                                        )}
-                                    </select>
+                                    <CustomSelect 
+                                        value={newUniversity} 
+                                        onChange={setNewUniversity} 
+                                        options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} 
+                                    />
                                 </div>
                                 <button onClick={handleAddEvent} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>
                             </div>
