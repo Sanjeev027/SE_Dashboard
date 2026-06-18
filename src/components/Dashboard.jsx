@@ -77,11 +77,21 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
     <motion.div
         whileHover={{ x: 5, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
         onClick={onClick}
-        className={`flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-all ${active ? "bg-red-600 text-white shadow-lg" : "text-gray-400"
+        className={`relative flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-colors ${active ? "text-white" : "text-gray-400"
             }`}
     >
-        <Icon size={20} />
-        <span className="font-medium">{label}</span>
+        {active && (
+            <motion.div
+                layoutId="activeTabHighlight"
+                className="absolute inset-0 bg-red-600 shadow-lg rounded-xl"
+                initial={false}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            />
+        )}
+        <div className="relative z-10 flex items-center gap-3">
+            <Icon size={20} />
+            <span className="font-medium">{label}</span>
+        </div>
     </motion.div>
 );
 
@@ -666,8 +676,17 @@ export default function Dashboard() {
                     </div>
                 </header>
 
-                <div className="flex flex-col xl:flex-row flex-1 overflow-y-auto xl:overflow-hidden">
-                    {activeTab === "Users" ? (
+                <div className="relative flex-1 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute inset-0 flex flex-col xl:flex-row overflow-y-auto xl:overflow-hidden"
+                        >
+                            {activeTab === "Users" ? (
                         <div className="flex-1 overflow-hidden">
                             <UserManagement />
                         </div>
@@ -1337,6 +1356,8 @@ export default function Dashboard() {
                             </div>
                         </>
                     )}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </main>
 
