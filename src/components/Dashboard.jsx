@@ -25,10 +25,12 @@ import {
     Activity,
     Eye,
     Sun,
-    Moon
+    Moon,
+    LayoutList
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
+import TaskBoard from "./TaskBoard";
 import { API_URL } from "../config";
 import { CustomSelect } from "./CustomSelect";
 
@@ -609,6 +611,12 @@ export default function Dashboard() {
                                 onClick={() => { setActiveTab("Users"); setIsSidebarOpen(false); }}
                             />
                         )}
+                        <SidebarItem
+                            icon={LayoutList}
+                            label="Task Board"
+                            active={activeTab === "Tasks"}
+                            onClick={() => { setActiveTab("Tasks"); setIsSidebarOpen(false); }}
+                        />
                     </LayoutGroup>
                 </nav>
 
@@ -673,6 +681,10 @@ export default function Dashboard() {
                             {activeTab === "Users" ? (
                         <div className="flex-1 overflow-hidden">
                             <UserManagement />
+                        </div>
+                    ) : activeTab === "Tasks" ? (
+                        <div className="flex-1 overflow-hidden">
+                            <TaskBoard />
                         </div>
                     ) : activeTab === "Report" ? (
                         <div className="flex-1 p-4 sm:p-8 overflow-y-auto flex flex-col gap-6">
