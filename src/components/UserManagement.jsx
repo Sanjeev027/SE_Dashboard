@@ -193,8 +193,8 @@ export default function UserManagement() {
                                                 >
                                                     <option value="All Universities">All Universities</option>
                                                     <option value="VGU">VGU</option>
-                                                    <option value="sgu">sgu</option>
-                                                    <option value="adypu">adypu</option>
+                                                    <option value="SGU">SGU</option>
+                                                    <option value="ADYPU">ADYPU</option>
                                                 </select>
                                             )}
                                         </td>
@@ -271,8 +271,8 @@ export default function UserManagement() {
                                             >
                                                 <option value="All Universities">All Universities</option>
                                                 <option value="VGU">VGU</option>
-                                                <option value="sgu">sgu</option>
-                                                <option value="adypu">adypu</option>
+                                                <option value="SGU">SGU</option>
+                                                <option value="ADYPU">ADYPU</option>
                                             </select>
                                         )}
                                     </div>

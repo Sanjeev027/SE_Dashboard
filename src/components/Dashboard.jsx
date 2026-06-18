@@ -865,7 +865,7 @@ export default function Dashboard() {
                             {/* University Selection Tabs */}
                             <div className="flex items-center gap-2 border-b border-gray-800 pb-px overflow-x-auto scrollbar-none shrink-0">
                                 {isCentral ? (
-                                    ["All Universities", "VGU", "sgu", "adypu"].map(uni => (
+                                    ["All Universities", "VGU", "SGU", "ADYPU"].map(uni => (
                                         <button
                                             key={uni}
                                             onClick={() => setSelectedUniTab(uni)}
@@ -910,7 +910,7 @@ export default function Dashboard() {
                                                             self.findIndex(e => e.id === event.id) === index
                                                         );
                                                      if (isCentral) {
-                                                         return uniqueEvents.filter(e => e.university === selectedUniTab || (selectedUniTab === "All Universities" && (e.university === "All Universities" || ["VGU", "sgu", "adypu"].includes(e.university)))).length;
+                                                         return uniqueEvents.filter(e => e.university === selectedUniTab || (selectedUniTab === "All Universities" && (e.university === "All Universities" || ["VGU", "SGU", "ADYPU"].includes(e.university)))).length;
                                                      }
                                                      return uniqueEvents.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase()).length;
                                                  })()}
@@ -1254,8 +1254,8 @@ export default function Dashboard() {
                                         {isCentral ? (
                                             <>
                                                 <option>VGU</option>
-                                                <option>sgu</option>
-                                                <option>adypu</option>
+                                                <option>SGU</option>
+                                                <option>ADYPU</option>
                                             </>
                                         ) : (
                                             <option>{user.university}</option>

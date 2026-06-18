@@ -163,8 +163,8 @@ export default function Signup() {
                 className="bg-transparent border-none outline-none text-white text-sm sm:text-base w-full placeholder-gray-600 cursor-pointer bg-[#121620]"
               >
                 <option value="VGU" className="bg-[#121620] text-white">VGU</option>
-                <option value="sgu" className="bg-[#121620] text-white">sgu</option>
-                <option value="adypu" className="bg-[#121620] text-white">adypu</option>
+                <option value="SGU" className="bg-[#121620] text-white">SGU</option>
+                <option value="ADYPU" className="bg-[#121620] text-white">ADYPU</option>
               </select>
             </div>
           </div>
