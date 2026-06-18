@@ -14,33 +14,13 @@ const particles = Array.from({ length: 20 }).map((_, i) => ({
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    return saved === "light" ? false : true;
-  });
-
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.setAttribute("data-theme", "dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.setAttribute("data-theme", "light");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDarkMode]);
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  }, []);
 
   return (
     <div className="relative w-screen h-screen bg-[#08090c] text-white flex items-center justify-center overflow-hidden font-sans">
-      
-      {/* Theme Toggle Button */}
-      <button
-        onClick={() => setIsDarkMode(!isDarkMode)}
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 bg-[#1c2128]/50 border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white rounded-2xl transition-all flex items-center justify-center shadow-lg"
-        title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      >
-        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
       
       {/* Drifting Glow Orbs */}
       <motion.div 

@@ -211,21 +211,11 @@ export default function Dashboard() {
     const [expandedUnis, setExpandedUnis] = useState({});
 
     // Theme state
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        const saved = localStorage.getItem("theme");
-        return saved === "light" ? false : true;
-    });
-
+    // Force dark mode
     useEffect(() => {
-        const root = document.documentElement;
-        if (isDarkMode) {
-            root.setAttribute("data-theme", "dark");
-            localStorage.setItem("theme", "dark");
-        } else {
-            root.setAttribute("data-theme", "light");
-            localStorage.setItem("theme", "light");
-        }
-    }, [isDarkMode]);
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("theme", "dark");
+    }, []);
 
     // Form states
     const [newTitle, setNewTitle] = useState("");
@@ -660,14 +650,6 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button 
-                            onClick={() => setIsDarkMode(!isDarkMode)} 
-                            className="p-2.5 bg-[#1c2128] border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white rounded-xl transition-all flex items-center justify-center shrink-0"
-                            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                        >
-                            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
-
                         <button onClick={() => {
                             setNewUniversity(isCentral ? "All Universities" : user?.university || "");
                             setIsEventModalOpen(true);
