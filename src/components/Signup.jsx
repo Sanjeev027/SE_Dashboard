@@ -25,7 +25,6 @@ export default function Signup() {
 
   const [loginId, setLoginId] = useState("");
   const [email, setEmail] = useState("");
-  const [university, setUniversity] = useState("VGU");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,7 +51,6 @@ export default function Signup() {
         loginId: loginId.trim(),
         email: email.trim(),
         password: password.trim(),
-        university: university,
       });
 
       setSuccess(res.data.message || "Account created successfully!");
@@ -152,22 +150,7 @@ export default function Signup() {
             </div>
           </div>
 
-          {/* University Input */}
-          <div>
-            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">University / Campus</label>
-            <div className="flex items-center gap-3 bg-[#1c2128]/50 border border-gray-800 focus-within:border-red-600/60 rounded-2xl px-4 py-3 sm:py-3.5 transition-all">
-              <Globe size={18} className="text-gray-500 shrink-0" />
-              <select
-                value={university}
-                onChange={(e) => setUniversity(e.target.value)}
-                className="bg-transparent border-none outline-none text-white text-sm sm:text-base w-full placeholder-gray-600 cursor-pointer bg-[#121620]"
-              >
-                <option value="VGU" className="bg-[#121620] text-white">VGU</option>
-                <option value="SGU" className="bg-[#121620] text-white">SGU</option>
-                <option value="ADYPU" className="bg-[#121620] text-white">ADYPU</option>
-              </select>
-            </div>
-          </div>
+
 
           {/* Password Input */}
           <div>
