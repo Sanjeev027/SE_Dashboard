@@ -136,6 +136,107 @@ const CustomSelect = ({ value, onChange, options, placeholder = "Select Option" 
     );
 };
 
+const CustomDatePicker = ({ value, onChange, placeholder = "Select Date" }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const datePickerRef = useRef(null);
+    const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+
+    const calendarDays = [];
+    for (let i = 0; i < firstDay; i++) calendarDays.push(null);
+    for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
+
+    const handlePrevMonth = (e) => {
+        e.stopPropagation();
+        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+    };
+
+    const handleNextMonth = (e) => {
+        e.stopPropagation();
+        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+    };
+
+    const handleSelectDate = (day) => {
+        const year = currentMonth.getFullYear();
+        const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(day).padStart(2, '0');
+        onChange(`${year}-${month}-${dayStr}`);
+        setIsOpen(false);
+    };
+
+    return (
+        <div ref={datePickerRef} className="relative w-full">
+            <div 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none hover:border-red-600/50 focus:border-red-600 transition-colors text-sm sm:text-base flex justify-between items-center cursor-pointer select-none"
+            >
+                <span>{value || placeholder}</span>
+                <CalendarIcon size={18} className={`transition-colors duration-300 ${isOpen ? "text-red-500" : "text-gray-500"}`} />
+            </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute z-50 w-[280px] sm:w-[320px] left-0 mt-2 bg-[#161b22] border border-gray-800 rounded-3xl shadow-2xl p-4"
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-colors">
+                                <ChevronLeft size={16} />
+                            </button>
+                            <span className="text-white font-bold text-sm">
+                                {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                            </span>
+                            <button onClick={handleNextMonth} className="p-2 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-colors">
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-7 gap-1 mb-2">
+                            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                                <div key={d} className="text-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">{d}</div>
+                            ))}
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                            {calendarDays.map((day, idx) => {
+                                if (!day) return <div key={idx} className="p-2"></div>;
+                                const isSelected = value && new Date(value).getDate() === day && new Date(value).getMonth() === currentMonth.getMonth() && new Date(value).getFullYear() === currentMonth.getFullYear();
+                                const isToday = day === new Date().getDate() && currentMonth.getMonth() === new Date().getMonth() && currentMonth.getFullYear() === new Date().getFullYear();
+                                return (
+                                    <div
+                                        key={idx}
+                                        onClick={() => handleSelectDate(day)}
+                                        className={`p-2 text-center text-xs sm:text-sm rounded-xl cursor-pointer transition-all flex items-center justify-center h-8 sm:h-10 font-medium select-none ${
+                                            isSelected ? "bg-red-600 text-white shadow-lg shadow-red-600/30 ring-2 ring-red-600 ring-offset-2 ring-offset-[#161b22]" 
+                                            : isToday ? "bg-white/10 text-white" 
+                                            : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                                        }`}
+                                    >
+                                        {day}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -1296,11 +1397,11 @@ export default function Dashboard() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Date</label>
-                                        <input type="date" value={newEventDate} onChange={(e) => setNewEventDate(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 transition-colors text-sm sm:text-base" />
+                                        <CustomDatePicker value={newEventDate} onChange={setNewEventDate} />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Date</label>
-                                        <input type="date" value={newEventEndDate} onChange={(e) => setNewEventEndDate(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 transition-colors text-sm sm:text-base" />
+                                        <CustomDatePicker value={newEventEndDate} onChange={setNewEventEndDate} />
                                     </div>
                                 </div>
                                 <div>
