@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const supabase = require("../db");
 const router = express.Router();
 
@@ -59,15 +60,27 @@ router.get("/:id", async (req, res) => {
 // Update user role or university
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { role, university } = req.body;
+  const { role, university, loginId, email, password } = req.body;
 
   try {
+    let updateData = {};
+    if (role !== undefined) updateData.role = role;
+    if (university !== undefined) updateData.university = university;
+    if (loginId !== undefined) updateData.login_id = loginId;
+    if (email !== undefined) updateData.email = email;
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
     const { data, error } = await supabase
       .from("users")
-      .update({ role, university })
+      .update(updateData)
       .eq("id", id);
 
-    if (error) return res.status(500).json({ message: "Database error" });
+    if (error) {
+      if (error.code === "23505") return res.status(400).json({ message: "Login ID or Email already exists" });
+      return res.status(500).json({ message: "Database error" });
+    }
 
     res.json({ message: "User updated successfully" });
   } catch (error) {

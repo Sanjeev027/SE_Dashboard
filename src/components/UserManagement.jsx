@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { UserCog, Trash2, Mail, Shield, Search, RefreshCcw, Globe } from "lucide-react";
+import { UserCog, Trash2, Mail, Shield, Search, RefreshCcw, Globe, Edit2, X, CheckCircle2 } from "lucide-react";
 import { API_URL } from "../config";
 import { CustomSelect } from "./CustomSelect";
 
@@ -9,6 +9,31 @@ export default function UserManagement() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [editUser, setEditUser] = useState(null);
+    const [editLoginId, setEditLoginId] = useState("");
+    const [editEmail, setEditEmail] = useState("");
+    const [editPassword, setEditPassword] = useState("");
+
+    const handleOpenEdit = (user) => {
+        setEditUser(user);
+        setEditLoginId(user.loginId || "");
+        setEditEmail(user.email || "");
+        setEditPassword("");
+    };
+
+    const handleSaveEdit = async () => {
+        try {
+            await axios.put(`${API_URL}/api/users/${editUser.id}`, {
+                loginId: editLoginId,
+                email: editEmail,
+                password: editPassword || undefined
+            });
+            setEditUser(null);
+            fetchUsers();
+        } catch (err) {
+            alert(err.response?.data?.message || "Error updating user details");
+        }
+    };
 
     const fetchUsers = async () => {
         try {
@@ -199,7 +224,14 @@ export default function UserManagement() {
                                             )}
                                         </td>
                                         <td className="p-6">
-                                            <div className="flex justify-center">
+                                            <div className="flex justify-center gap-2">
+                                                <button
+                                                    onClick={() => handleOpenEdit(user)}
+                                                    className="p-3 rounded-xl hover:bg-blue-500/10 text-gray-500 hover:text-blue-500 transition-all border border-transparent hover:border-blue-500/20 bg-transparent border-none"
+                                                    title="Edit User"
+                                                >
+                                                    <Edit2 size={20} />
+                                                </button>
                                                 <button
                                                     onClick={() => handleDeleteUser(user.id)}
                                                     className="p-3 rounded-xl hover:bg-red-500/10 text-gray-500 hover:text-red-500 transition-all border border-transparent hover:border-red-500/20 bg-transparent border-none"
@@ -231,13 +263,22 @@ export default function UserManagement() {
                                             <span className="truncate">{user.email}</span>
                                         </p>
                                     </div>
-                                    <button 
-                                        onClick={() => handleDeleteUser(user.id)}
-                                        className="absolute top-5 right-5 text-gray-600 hover:text-red-500 p-2 rounded-lg hover:bg-red-500/10 transition-colors bg-transparent border-none"
-                                        title="Revoke Access"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
+                                    <div className="absolute top-5 right-5 flex gap-1">
+                                        <button 
+                                            onClick={() => handleOpenEdit(user)}
+                                            className="text-gray-600 hover:text-blue-500 p-2 rounded-lg hover:bg-blue-500/10 transition-colors bg-transparent border-none"
+                                            title="Edit User"
+                                        >
+                                            <Edit2 size={18} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDeleteUser(user.id)}
+                                            className="text-gray-600 hover:text-red-500 p-2 rounded-lg hover:bg-red-500/10 transition-colors bg-transparent border-none"
+                                            title="Revoke Access"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Controls */}
@@ -287,6 +328,67 @@ export default function UserManagement() {
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #444; }
             `}</style>
+            {/* Edit User Modal */}
+            {editUser && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setEditUser(null)}></div>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="relative w-full max-w-md bg-[#161b22] border border-gray-800 rounded-[2rem] shadow-2xl p-6 sm:p-8"
+                    >
+                        <button 
+                            onClick={() => setEditUser(null)}
+                            className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors border-none bg-transparent"
+                        >
+                            <X size={24} />
+                        </button>
+                        
+                        <div className="mb-8 mt-2">
+                            <h3 className="text-2xl font-bold text-white mb-2">Edit User</h3>
+                            <p className="text-sm text-gray-400">Update account details for <span className="text-white font-semibold">{editUser.loginId}</span>.</p>
+                        </div>
+
+                        <div className="space-y-5">
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Username</label>
+                                <input 
+                                    value={editLoginId} 
+                                    onChange={(e) => setEditLoginId(e.target.value)} 
+                                    className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-colors text-sm sm:text-base" 
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Email Address</label>
+                                <input 
+                                    value={editEmail} 
+                                    onChange={(e) => setEditEmail(e.target.value)} 
+                                    className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-colors text-sm sm:text-base" 
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">New Password</label>
+                                <input 
+                                    type="password"
+                                    placeholder="Leave blank to keep current"
+                                    value={editPassword} 
+                                    onChange={(e) => setEditPassword(e.target.value)} 
+                                    className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-colors text-sm sm:text-base placeholder:text-gray-600" 
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mt-8">
+                            <button 
+                                onClick={handleSaveEdit}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 border-none"
+                            >
+                                <CheckCircle2 size={20} /> Save Changes
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
