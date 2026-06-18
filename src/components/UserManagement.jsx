@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { UserCog, Trash2, Mail, Shield, Search, RefreshCcw, Globe } from "lucide-react";
 import { API_URL } from "../config";
+import { CustomSelect } from "./CustomSelect";
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
@@ -168,17 +169,16 @@ export default function UserManagement() {
                                             </div>
                                         </td>
                                         <td className="p-6">
-                                            <select
+                                            <CustomSelect
                                                 value={user.role}
-                                                onChange={(e) => handleUpdateUser(user.id, e.target.value, user.university)}
-                                                className={`px-4 py-2.5 rounded-xl border text-sm font-bold transition-all outline-none cursor-pointer ${user.role === 'central'
-                                                        ? 'bg-[#1c2128] text-amber-500 border-amber-500/30'
-                                                        : 'bg-[#1c2128] text-blue-500 border-blue-500/30'
-                                                    }`}
-                                            >
-                                                <option value="manager" className="bg-[#161b22] text-white">PM/PMA</option>
-                                                <option value="central" className="bg-[#161b22] text-white">Admin</option>
-                                            </select>
+                                                onChange={(val) => handleUpdateUser(user.id, val, user.university)}
+                                                options={[{label: "PM/PMA", value: "manager"}, {label: "Admin", value: "central"}]}
+                                                className="w-32"
+                                                padding="py-2.5 px-4"
+                                                textSize="text-sm font-bold"
+                                                dropdownPadding="py-2.5 px-4"
+                                                dropdownTextSize="text-sm font-bold"
+                                            />
                                         </td>
                                         <td className="p-6">
                                             {user.role === 'central' ? (
@@ -186,16 +186,16 @@ export default function UserManagement() {
                                                     <Shield size={16} /> All Universities
                                                 </div>
                                             ) : (
-                                                <select
+                                                <CustomSelect
                                                     value={user.university}
-                                                    onChange={(e) => handleUpdateUser(user.id, user.role, e.target.value)}
-                                                    className="w-full max-w-xs bg-gray-800/40 border border-gray-700 rounded-xl p-2.5 text-white text-sm outline-none focus:border-red-600 transition-colors cursor-pointer"
-                                                >
-                                                    <option value="All Universities">All Universities</option>
-                                                    <option value="VGU">VGU</option>
-                                                    <option value="SGU">SGU</option>
-                                                    <option value="ADYPU">ADYPU</option>
-                                                </select>
+                                                    onChange={(val) => handleUpdateUser(user.id, user.role, val)}
+                                                    options={["All Universities", "VGU", "SGU", "ADYPU"]}
+                                                    className="w-full max-w-xs"
+                                                    padding="py-2.5 px-4"
+                                                    textSize="text-sm"
+                                                    dropdownPadding="py-2.5 px-4"
+                                                    dropdownTextSize="text-sm"
+                                                />
                                             )}
                                         </td>
                                         <td className="p-6">
@@ -244,18 +244,16 @@ export default function UserManagement() {
                                 <div className="space-y-3">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Access Role</label>
-                                        <select
+                                        <CustomSelect
                                             value={user.role}
-                                            onChange={(e) => handleUpdateUser(user.id, e.target.value, user.university)}
-                                            className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold transition-all outline-none cursor-pointer ${
-                                                user.role === 'central'
-                                                    ? 'bg-[#1c2128] text-amber-500 border-amber-500/30'
-                                                    : 'bg-[#1c2128] text-blue-500 border-blue-500/30'
-                                            }`}
-                                        >
-                                            <option value="manager">PM/PMA</option>
-                                            <option value="central">Admin</option>
-                                        </select>
+                                            onChange={(val) => handleUpdateUser(user.id, val, user.university)}
+                                            options={[{label: "PM/PMA", value: "manager"}, {label: "Admin", value: "central"}]}
+                                            className="w-full"
+                                            padding="py-2.5 px-4"
+                                            textSize="text-sm font-bold"
+                                            dropdownPadding="py-2.5 px-4"
+                                            dropdownTextSize="text-sm font-bold"
+                                        />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Organization</label>
@@ -264,16 +262,16 @@ export default function UserManagement() {
                                                 <Shield size={16} /> All Universities
                                             </div>
                                         ) : (
-                                            <select
+                                            <CustomSelect
                                                 value={user.university}
-                                                onChange={(e) => handleUpdateUser(user.id, user.role, e.target.value)}
-                                                className="w-full bg-[#1c2128] border border-gray-700 rounded-xl p-2.5 text-white text-sm outline-none focus:border-red-600 transition-colors cursor-pointer"
-                                            >
-                                                <option value="All Universities">All Universities</option>
-                                                <option value="VGU">VGU</option>
-                                                <option value="SGU">SGU</option>
-                                                <option value="ADYPU">ADYPU</option>
-                                            </select>
+                                                onChange={(val) => handleUpdateUser(user.id, user.role, val)}
+                                                options={["All Universities", "VGU", "SGU", "ADYPU"]}
+                                                className="w-full"
+                                                padding="py-2.5 px-4"
+                                                textSize="text-sm"
+                                                dropdownPadding="py-2.5 px-4"
+                                                dropdownTextSize="text-sm"
+                                            />
                                         )}
                                     </div>
                                 </div>

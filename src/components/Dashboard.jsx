@@ -30,6 +30,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import UserManagement from "./UserManagement";
 import { API_URL } from "../config";
+import { CustomSelect } from "./CustomSelect";
 
 const getColorClasses = (color) => {
     const maps = {
@@ -84,57 +85,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
     </motion.div>
 );
 
-const CustomSelect = ({ value, onChange, options, placeholder = "Select Option" }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const selectRef = useRef(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (selectRef.current && !selectRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    return (
-        <div ref={selectRef} className="relative w-full">
-            <div 
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none hover:border-red-600/50 focus:border-red-600 transition-colors text-sm sm:text-base flex justify-between items-center cursor-pointer select-none"
-            >
-                <span className="capitalize">{value || placeholder}</span>
-                <ChevronDown size={18} className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-red-500" : "text-gray-500"}`} />
-            </div>
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute z-50 w-full mt-2 bg-[#161b22] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl py-2"
-                    >
-                        {options.map((opt) => {
-                            const optValue = typeof opt === 'object' ? opt.value : opt;
-                            const optLabel = typeof opt === 'object' ? opt.label : opt;
-                            return (
-                                <div
-                                    key={optValue}
-                                    onClick={() => { onChange(optValue); setIsOpen(false); }}
-                                    className={`px-4 py-3 text-sm sm:text-base cursor-pointer transition-all hover:bg-red-600/10 hover:text-red-500 flex items-center select-none ${value === optValue ? "bg-red-600/10 text-red-500 font-medium border-l-2 border-red-600" : "text-gray-300 border-l-2 border-transparent"}`}
-                                >
-                                    {optLabel}
-                                </div>
-                            );
-                        })}
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
-    );
-};
 
 const CustomDatePicker = ({ value, onChange, placeholder = "Select Date" }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -812,16 +763,21 @@ export default function Dashboard() {
                                         <div className="flex items-center gap-2">
                                             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Campus:</span>
                                             {isCentral ? (
-                                                <select 
+                                                <CustomSelect 
                                                     value={selectedReportFilterUni} 
-                                                    onChange={(e) => setSelectedReportFilterUni(e.target.value)}
-                                                    className="bg-[#1c2128] border border-gray-800 hover:border-gray-700 transition-colors rounded-xl px-3 py-1.5 text-xs text-white outline-none cursor-pointer font-sans"
-                                                >
-                                                    <option value="All">All Campuses</option>
-                                                    <option value="VGU">VGU</option>
-                                                    <option value="sgu">sgu</option>
-                                                    <option value="adypu">adypu</option>
-                                                </select>
+                                                    onChange={setSelectedReportFilterUni}
+                                                    options={[
+                                                        {label: "All Campuses", value: "All"}, 
+                                                        {label: "VGU", value: "VGU"}, 
+                                                        {label: "SGU", value: "SGU"}, 
+                                                        {label: "ADYPU", value: "ADYPU"}
+                                                    ]}
+                                                    padding="py-1.5 px-3"
+                                                    textSize="text-xs"
+                                                    dropdownPadding="py-2 px-3"
+                                                    dropdownTextSize="text-xs"
+                                                    className="w-40"
+                                                />
                                             ) : (
                                                 <div className="bg-gray-800/30 border border-gray-800/80 rounded-xl px-3 py-1.5 text-xs text-gray-400 font-semibold font-sans">
                                                     {user.university}
@@ -832,18 +788,19 @@ export default function Dashboard() {
                                         {/* Event Type Filter */}
                                         <div className="flex items-center gap-2">
                                             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Event Type:</span>
-                                            <select 
+                                            <CustomSelect 
                                                 value={selectedReportFilterType} 
-                                                onChange={(e) => setSelectedReportFilterType(e.target.value)}
-                                                className="bg-[#1c2128] border border-gray-800 hover:border-gray-700 transition-colors rounded-xl px-3 py-1.5 text-xs text-white outline-none cursor-pointer font-sans"
-                                            >
-                                                <option value="All">All Types</option>
-                                                <option value="Circular">Circular</option>
-                                                <option value="Co-Circular">Co-Circular</option>
-                                                <option value="Extra-Circular">Extra-Circular</option>
-                                                <option value="Cultural Activities">Cultural Activities</option>
-                                                <option value="Other">Other</option>
-                                            </select>
+                                                onChange={setSelectedReportFilterType}
+                                                options={[
+                                                    {label: "All Types", value: "All"}, 
+                                                    "Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"
+                                                ]}
+                                                padding="py-1.5 px-3"
+                                                textSize="text-xs"
+                                                dropdownPadding="py-2 px-3"
+                                                dropdownTextSize="text-xs"
+                                                className="w-40"
+                                            />
                                         </div>
                                     </div>
                                 </div>
