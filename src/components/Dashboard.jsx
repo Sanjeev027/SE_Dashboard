@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import axios from "axios";
 import {
     LayoutDashboard,
@@ -606,18 +606,20 @@ export default function Dashboard() {
                 </div>
 
                 <nav className="flex-1 space-y-2">
-                    <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === "Users" ? false : activeTab === "Dashboard"} onClick={() => { setActiveTab("Dashboard"); setIsSidebarOpen(false); }} />
-                    <SidebarItem icon={GraduationCap} label="University" active={activeTab === "University"} onClick={() => { setActiveTab("University"); setIsSidebarOpen(false); }} />
-                    <SidebarItem icon={FileText} label="Report" active={activeTab === "Report"} onClick={() => { setActiveTab("Report"); setIsSidebarOpen(false); }} />
+                    <LayoutGroup>
+                        <SidebarItem icon={LayoutDashboard} label="Dashboard" active={activeTab === "Users" ? false : activeTab === "Dashboard"} onClick={() => { setActiveTab("Dashboard"); setIsSidebarOpen(false); }} />
+                        <SidebarItem icon={GraduationCap} label="University" active={activeTab === "University"} onClick={() => { setActiveTab("University"); setIsSidebarOpen(false); }} />
+                        <SidebarItem icon={FileText} label="Report" active={activeTab === "Report"} onClick={() => { setActiveTab("Report"); setIsSidebarOpen(false); }} />
 
-                    {isCentral && (
-                        <SidebarItem
-                            icon={Users}
-                            label="Admin Panel"
-                            active={activeTab === "Users"}
-                            onClick={() => { setActiveTab("Users"); setIsSidebarOpen(false); }}
-                        />
-                    )}
+                        {isCentral && (
+                            <SidebarItem
+                                icon={Users}
+                                label="Admin Panel"
+                                active={activeTab === "Users"}
+                                onClick={() => { setActiveTab("Users"); setIsSidebarOpen(false); }}
+                            />
+                        )}
+                    </LayoutGroup>
                 </nav>
 
                 <div className="mt-auto pt-6 border-t border-gray-800 space-y-2">
