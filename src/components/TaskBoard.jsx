@@ -129,7 +129,9 @@ export default function TaskBoard() {
         
         try {
             let targets = [];
-            if (assignedTeam !== "Operations Team" || taskScope === "Central Team") {
+            if (!isCentral) {
+                targets = [user?.university];
+            } else if (assignedTeam !== "Operations Team" || taskScope === "Central Team") {
                 targets = ["Central"];
             } else {
                 targets = selectedUniversities;
@@ -149,7 +151,7 @@ export default function TaskBoard() {
                         description: t.task_description,
                         status: "Pending Approval",
                         priority,
-                        assigned_team: assignedTeam,
+                        assigned_team: isCentral ? assignedTeam : "Operations Team",
                         university: uni,
                         created_by: user?.id,
                         batch_id: batchId,
@@ -175,7 +177,9 @@ export default function TaskBoard() {
         try {
             // Determine universities to assign
             let targets = [];
-            if (assignedTeam !== "Operations Team" || taskScope === "Central Team") {
+            if (!isCentral) {
+                targets = [user?.university];
+            } else if (assignedTeam !== "Operations Team" || taskScope === "Central Team") {
                 targets = ["Central"];
             } else {
                 targets = selectedUniversities;
@@ -190,7 +194,7 @@ export default function TaskBoard() {
                 description,
                 status: "Pending",
                 priority,
-                assigned_team: assignedTeam,
+                assigned_team: isCentral ? assignedTeam : "Operations Team",
                 university: uni,
                 created_by: user?.id,
                 task_source: "manual"
@@ -483,10 +487,14 @@ export default function TaskBoard() {
                                         <textarea rows={3} placeholder="Provide details about the task..." value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm sm:text-base resize-none custom-scrollbar" />
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                                         <div>
                                             <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Assign Team</label>
-                                            <CustomSelect value={assignedTeam} onChange={setAssignedTeam} options={teams} />
+                                            {isCentral ? (
+                                                <CustomSelect value={assignedTeam} onChange={setAssignedTeam} options={teams} />
+                                            ) : (
+                                                <div className="bg-card border border-border-card rounded-[14px] h-[44px] px-4 flex items-center text-gray-300 opacity-70 cursor-not-allowed text-sm sm:text-base">Operations Team</div>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Priority</label>
@@ -494,48 +502,63 @@ export default function TaskBoard() {
                                         </div>
                                     </div>
 
-                                    {assignedTeam === "Operations Team" && (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border-card/50 p-4 rounded-[20px] bg-app">
-                                            <div>
-                                                <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Task Scope</label>
-                                                <CustomSelect value={taskScope} onChange={setTaskScope} options={["Central Team", "University"]} />
-                                            </div>
-                                            {taskScope === "University" && (
-                                                <div>
-                                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Select Universities</label>
-                                                    <div className="flex flex-col gap-2 bg-card border border-border-card rounded-xl p-3">
-                                                        {["VGU", "SGU", "ADYPU", "GMRIT"].map(uni => (
-                                                            <label key={uni} className="flex items-center gap-2 cursor-pointer group">
-                                                                <input 
-                                                                    type="checkbox" 
-                                                                    className="w-4 h-4 rounded border-hover text-red-500 focus:ring-red-500 bg-[#161b22] cursor-pointer"
-                                                                    checked={selectedUniversities.includes(uni)}
-                                                                    onChange={(e) => {
-                                                                        if (e.target.checked) {
-                                                                            setSelectedUniversities([...selectedUniversities, uni]);
-                                                                        } else {
-                                                                            setSelectedUniversities(selectedUniversities.filter(u => u !== uni));
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <span className="text-sm text-muted group-hover:text-gray-200 transition-colors font-medium">{uni}</span>
-                                                            </label>
-                                                        ))}
-                                                        <div className="border-t border-border-card mt-1 pt-2">
-                                                            <button 
-                                                                type="button" 
-                                                                onClick={() => {
-                                                                    const allU = ["VGU", "SGU", "ADYPU", "GMRIT"];
-                                                                    if (selectedUniversities.length === allU.length) setSelectedUniversities([]);
-                                                                    else setSelectedUniversities(allU);
-                                                                }}
-                                                                className="text-[10px] uppercase font-bold text-blue-500 hover:text-blue-400 cursor-pointer bg-transparent border-none p-0"
-                                                            >
-                                                                {selectedUniversities.length === 4 ? "Deselect All" : "Select All Universities"}
-                                                            </button>
-                                                        </div>
+                                    {(!isCentral || assignedTeam === "Operations Team") && (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border border-border-card/50 p-4 rounded-[20px] bg-app mt-4">
+                                            {isCentral ? (
+                                                <>
+                                                    <div>
+                                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Task Scope</label>
+                                                        <CustomSelect value={taskScope} onChange={setTaskScope} options={["Central Team", "University"]} />
                                                     </div>
-                                                </div>
+                                                    {taskScope === "University" && (
+                                                        <div>
+                                                            <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Select Universities</label>
+                                                            <div className="flex flex-col gap-2 bg-card border border-border-card rounded-xl p-3">
+                                                                {["VGU", "SGU", "ADYPU", "GMRIT"].map(uni => (
+                                                                    <label key={uni} className="flex items-center gap-2 cursor-pointer group">
+                                                                        <input 
+                                                                            type="checkbox" 
+                                                                            className="w-4 h-4 rounded border-hover text-red-500 focus:ring-red-500 bg-[#161b22] cursor-pointer"
+                                                                            checked={selectedUniversities.includes(uni)}
+                                                                            onChange={(e) => {
+                                                                                if (e.target.checked) {
+                                                                                    setSelectedUniversities([...selectedUniversities, uni]);
+                                                                                } else {
+                                                                                    setSelectedUniversities(selectedUniversities.filter(u => u !== uni));
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <span className="text-sm text-muted group-hover:text-gray-200 transition-colors font-medium">{uni}</span>
+                                                                    </label>
+                                                                ))}
+                                                                <div className="border-t border-border-card mt-1 pt-2">
+                                                                    <button 
+                                                                        type="button" 
+                                                                        onClick={() => {
+                                                                            const allU = ["VGU", "SGU", "ADYPU", "GMRIT"];
+                                                                            if (selectedUniversities.length === allU.length) setSelectedUniversities([]);
+                                                                            else setSelectedUniversities(allU);
+                                                                        }}
+                                                                        className="text-[10px] uppercase font-bold text-blue-500 hover:text-blue-400 cursor-pointer bg-transparent border-none p-0"
+                                                                    >
+                                                                        {selectedUniversities.length === 4 ? "Deselect All" : "Select All Universities"}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div>
+                                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Task Scope</label>
+                                                        <div className="bg-card border border-border-card rounded-[14px] h-[44px] px-4 flex items-center text-gray-300 opacity-70 cursor-not-allowed text-sm sm:text-base">In-Campus</div>
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Target University</label>
+                                                        <div className="bg-card border border-border-card rounded-[14px] h-[44px] px-4 flex items-center text-gray-300 opacity-70 cursor-not-allowed text-sm sm:text-base">{user?.university}</div>
+                                                    </div>
+                                                </>
                                             )}
                                         </div>
                                     )}
