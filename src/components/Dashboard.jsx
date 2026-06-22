@@ -33,6 +33,7 @@ import UserManagement from "./UserManagement";
 import TaskBoard from "./TaskBoard";
 import { API_URL } from "../config";
 import { CustomSelect } from "./CustomSelect";
+import { getCampusColor, campusColorMapping } from "../utils/campusColors";
 
 const getColorClasses = (color) => {
     const maps = {
@@ -1107,7 +1108,7 @@ export default function Dashboard() {
                                             }
 
                                             return uniEvents.map(event => {
-                                                const colors = getColorClasses(event.color);
+                                                const colors = getColorClasses(getCampusColor(event.university));
                                                 return (
                                                     <motion.div 
                                                         initial={{ opacity: 0, y: 10 }} 
@@ -1157,6 +1158,20 @@ export default function Dashboard() {
                                         <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors"><ChevronLeft size={20} /></button>
                                         <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors"><ChevronRight size={20} /></button>
                                     </div>
+                                </div>
+
+                                {/* Campus Legend */}
+                                <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8 bg-[#1c2128]/50 p-3 sm:p-4 rounded-xl border border-gray-800 backdrop-blur-sm">
+                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mr-2">Campus Legend:</span>
+                                    {Object.entries(campusColorMapping).map(([campus, color]) => {
+                                        const c = getColorClasses(color);
+                                        return (
+                                            <div key={campus} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${c.bg} ${c.borderLight}`}>
+                                                <div className={`w-2 h-2 rounded-full ${c.border.replace('border-', 'bg-')}`} />
+                                                <span className={`text-[10px] font-bold uppercase tracking-wide ${c.text}`}>{campus}</span>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
                                 {/* Stats Counter Grid */}
@@ -1295,7 +1310,7 @@ export default function Dashboard() {
                                                         </div>
                                                         <div className="space-y-1">
                                                             {dayEvents.slice(0, 3).map(event => {
-                                                                const colors = getColorClasses(event.color);
+                                                                const colors = getColorClasses(getCampusColor(event.university));
                                                                 return (
                                                                     <div key={event.id} className={`${colors.bg} border-l-2 ${colors.border} px-1 sm:px-1.5 py-0.5 rounded`}>
                                                                         <p className="text-[8px] sm:text-[10px] font-medium truncate text-gray-200">{event.title}</p>
@@ -1330,7 +1345,7 @@ export default function Dashboard() {
                                             )}
                                             <div className="flex flex-col gap-3">
                                                 {(() => {
-                                                    const colors = getColorClasses(event.color);
+                                                    const colors = getColorClasses(getCampusColor(event.university));
                                                     return (
                                                         <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${colors.bg} ${colors.text} border ${colors.borderLight} w-fit`}>
                                                             {event.type}
