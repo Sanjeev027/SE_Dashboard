@@ -461,6 +461,10 @@ export default function Dashboard() {
             alert("End date cannot be before start date");
             return;
         }
+        if (!newDescription.trim()) {
+            alert("Please enter a description for the event");
+            return;
+        }
 
         if (!isCentral && newUniversity !== user.university && newUniversity !== "All Universities") {
             alert("no access to add for this university");
@@ -1494,11 +1498,11 @@ export default function Dashboard() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type *</label>
                                         <CustomSelect value={newType} onChange={setNewType} options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University *</label>
                                         <CustomSelect value={newUniversity} onChange={setNewUniversity} options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} />
                                     </div>
                                 </div>
@@ -1523,7 +1527,7 @@ export default function Dashboard() {
                                     </div>
                                 )}
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description</label>
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description *</label>
                                     <textarea rows={3} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none" />
                                 </div>
                             </div>
