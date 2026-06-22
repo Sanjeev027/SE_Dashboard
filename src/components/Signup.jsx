@@ -90,7 +90,7 @@ export default function Signup() {
             <GraduationCap size={24} />
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-gray-100">Create Account</h2>
-          <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">Join Academia_HuB</p>
+          <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">Join NEXUS_Hub</p>
         </div>
 
         {/* Notices */}

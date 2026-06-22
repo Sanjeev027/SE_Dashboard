@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Edit2, Trash2, Calendar, MapPin, User, FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { X, Edit2, Trash2, Calendar, MapPin, User, FileText, CheckCircle2, Clock, AlertCircle, LayoutList } from "lucide-react";
 import { getCampusColor, campusColorMapping } from "../utils/campusColors";
 import { API_URL } from "../config";
 import axios from "axios";
@@ -13,6 +13,28 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
         event_outcome: "",
         photos_link: ""
     });
+    const [eventTasks, setEventTasks] = useState([]);
+    const [isLoadingTasks, setIsLoadingTasks] = useState(false);
+
+    useEffect(() => {
+        if (isOpen && event?.id) {
+            fetchEventTasks();
+        } else {
+            setEventTasks([]);
+        }
+    }, [isOpen, event?.id]);
+
+    const fetchEventTasks = async () => {
+        setIsLoadingTasks(true);
+        try {
+            const res = await axios.get(`${API_URL}/api/tasks?event_id=${event.id}`);
+            setEventTasks(res.data);
+        } catch (error) {
+            console.error("Error fetching event tasks:", error);
+        } finally {
+            setIsLoadingTasks(false);
+        }
+    };
 
     if (!event) return null;
 
@@ -163,6 +185,54 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                     </h4>
                                     <div className={`p-4 rounded-2xl border ${event.status === 'Cancelled' ? 'bg-red-500/5 border-red-500/20' : 'bg-orange-500/5 border-orange-500/20'}`}>
                                         <p className="text-sm text-gray-300">{event.remarks}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* SOP Tasks Section */}
+                            {eventTasks && eventTasks.length > 0 && (
+                                <div className="border-t border-gray-800 pt-8 mt-8">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                                            <LayoutList size={18} className="text-blue-500" />
+                                            SOP Progress
+                                        </h4>
+                                        <span className="text-xs font-bold text-gray-400">
+                                            {Math.round((eventTasks.filter(t => t.status === 'Completed').length / eventTasks.length) * 100)}% Complete
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-800 rounded-full h-1.5 mb-6 overflow-hidden">
+                                        <div 
+                                            className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" 
+                                            style={{ width: `${(eventTasks.filter(t => t.status === 'Completed').length / eventTasks.length) * 100}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {eventTasks.map(task => (
+                                            <div key={task.id} className="flex items-center gap-3">
+                                                {task.status === 'Completed' ? (
+                                                    <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                                                ) : task.status === 'In Progress' ? (
+                                                    <Clock size={16} className="text-blue-500 shrink-0" />
+                                                ) : task.status === 'Missed' ? (
+                                                    <div className="w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center shrink-0"><div className="w-2 h-2 rounded-full bg-red-500"></div></div>
+                                                ) : (
+                                                    <div className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0"><div className="w-2 h-2 rounded-full bg-amber-500"></div></div>
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-sm ${task.status === 'Completed' ? 'text-gray-500 line-through' : 'text-gray-200'} truncate`}>{task.title}</p>
+                                                </div>
+                                                {task.status === 'Pending' && (
+                                                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Pending</span>
+                                                )}
+                                                {task.status === 'In Progress' && (
+                                                    <span className="text-[10px] text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">In Progress</span>
+                                                )}
+                                                {task.status === 'Missed' && (
+                                                    <span className="text-[10px] text-red-500 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">Missed</span>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}

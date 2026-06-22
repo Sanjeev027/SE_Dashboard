@@ -5,6 +5,8 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const eventRoutes = require("./routes/events");
 const taskRoutes = require("./routes/tasks");
+const sopRoutes = require("./routes/sop");
+const uploadRoutes = require("./routes/upload");
 
 dotenv.config();
 const app = express();
@@ -37,6 +39,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/sop", sopRoutes);
+app.use("/api/upload", uploadRoutes);
 
 if (process.env.NODE_ENV !== "production") {
     const PORT = process.env.PORT || 5000;

@@ -32,7 +32,8 @@ router.post("/", async (req, res) => {
     title, type, university, date, end_date, color,
     start_time, end_time, description, venue, coordinator,
     status, photos_link, feedback_summary, attendance_count,
-    event_outcome, remarks, feedback_submitted
+    event_outcome, remarks, feedback_submitted,
+    sopTasks
   } = req.body;
 
   if (role === "campus_admin" && userUniversity !== university) {
@@ -61,7 +62,28 @@ router.post("/", async (req, res) => {
       return res.status(500).json({ message: "Database error" });
     }
 
-    res.json({ message: "Event added", id: data[0].id });
+    const newEventId = data[0].id;
+
+    if (sopTasks && Array.isArray(sopTasks) && sopTasks.length > 0) {
+      const taskInserts = sopTasks.map(t => ({
+        title: t.task_name,
+        description: t.task_description,
+        assigned_team: t.assigned_to || "Operations Team",
+        priority: "Medium",
+        status: "Pending",
+        university: university,
+        event_id: newEventId,
+        due_date: t.due_date,
+        task_source: "sop"
+      }));
+      
+      const { error: taskError } = await supabase.from("tasks").insert(taskInserts);
+      if (taskError) {
+        console.error("Error inserting auto-generated tasks:", taskError);
+      }
+    }
+
+    res.json({ message: "Event added", id: newEventId });
   } catch (error) {
     console.error("Add Event Error:", error);
     res.status(500).json({ message: "Server error" });

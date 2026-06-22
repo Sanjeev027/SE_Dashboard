@@ -239,6 +239,8 @@ export default function Dashboard() {
     const [newStatus, setNewStatus] = useState("Scheduled");
     const [newPhotosLink, setNewPhotosLink] = useState("");
     const [newRemarks, setNewRemarks] = useState("");
+    const [sopTasks, setSopTasks] = useState([]);
+    const [isSopLoading, setIsSopLoading] = useState(false);
 
     // Report states
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -259,6 +261,40 @@ export default function Dashboard() {
     // Events state
     const [events, setEvents] = useState({});
     const [reports, setReports] = useState([]);
+
+    useEffect(() => {
+        if (isEventModalOpen && newType && !editingEventId) {
+            const fetchSOP = async () => {
+                setIsSopLoading(true);
+                try {
+                    const res = await axios.get(`${API_URL}/api/sop/${newType}`);
+                    if (res.data && res.data.length > 0) {
+                        const baseDate = newEventDate ? new Date(newEventDate) : new Date();
+                        const generatedTasks = res.data.map(template => {
+                            const dueDate = new Date(baseDate);
+                            dueDate.setDate(dueDate.getDate() + template.offset_days);
+                            return {
+                                ...template,
+                                due_date: dueDate.toISOString().split('T')[0],
+                                selected: true
+                            };
+                        });
+                        setSopTasks(generatedTasks);
+                    } else {
+                        setSopTasks([]);
+                    }
+                } catch (error) {
+                    console.error("Error fetching SOP:", error);
+                    setSopTasks([]);
+                } finally {
+                    setIsSopLoading(false);
+                }
+            };
+            fetchSOP();
+        } else {
+            setSopTasks([]);
+        }
+    }, [newType, newEventDate, isEventModalOpen, editingEventId]);
 
     const fetchReports = async () => {
         try {
@@ -505,6 +541,7 @@ export default function Dashboard() {
             status: newStatus,
             photos_link: newPhotosLink,
             remarks: newRemarks,
+            ...(!editingEventId && { sopTasks: sopTasks.filter(t => t.selected) })
         };
 
         const axiosConfig = {
@@ -676,7 +713,7 @@ export default function Dashboard() {
                         <div className="w-10 h-10 bg-[#1c2128] border border-gray-800 rounded-lg flex items-center justify-center shadow-lg shadow-red-600/5 text-red-500">
                             <GraduationCap size={20} />
                         </div>
-                        <h1 className="text-xl font-bold tracking-tight">Academia_HuB</h1>
+                        <h1 className="text-xl font-bold tracking-tight">NEXUS_Hub</h1>
                     </div>
                     {/* Close button for mobile sidebar */}
                     <button 
@@ -1551,6 +1588,42 @@ export default function Dashboard() {
                                     <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description *</label>
                                     <textarea rows={3} disabled={user?.role === "event_coordinator"} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed" />
                                 </div>
+                                {!editingEventId && sopTasks.length > 0 && (
+                                    <div className="mt-4 border border-gray-800 rounded-2xl p-4 bg-[#161b22]">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                                                <LayoutList size={16} className="text-blue-500" /> Linked SOP Tasks
+                                            </h4>
+                                            <span className="text-[10px] font-bold bg-blue-500/20 text-blue-500 px-2 py-1 rounded-lg tracking-widest uppercase">{sopTasks[0].template_name}</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {sopTasks.map((task, index) => (
+                                                <div key={index} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${task.selected ? 'bg-[#1c2128] border-blue-500/30' : 'bg-[#1c2128]/50 border-gray-800/50 opacity-50'}`}>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={task.selected} 
+                                                        disabled={task.is_mandatory}
+                                                        onChange={(e) => {
+                                                            const newTasks = [...sopTasks];
+                                                            newTasks[index].selected = e.target.checked;
+                                                            setSopTasks(newTasks);
+                                                        }}
+                                                        className="w-4 h-4 rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-600" 
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs font-semibold text-white truncate">{task.task_name} {task.is_mandatory && <span className="text-red-500 ml-1">*</span>}</p>
+                                                        <p className="text-[10px] text-gray-500 truncate">Due: {new Date(task.due_date).toDateString()}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {!editingEventId && isSopLoading && (
+                                    <div className="mt-4 border border-gray-800 rounded-2xl p-6 bg-[#161b22] flex items-center justify-center">
+                                        <p className="text-xs font-semibold text-gray-500 animate-pulse">Loading SOP template...</p>
+                                    </div>
+                                )}
                             </div>
                             <div className="pt-6 mt-4 border-t border-gray-800">
                                 <button onClick={handleSaveEvent} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>

@@ -80,7 +80,7 @@ export default function Login() {
             <GraduationCap size={24} />
           </div>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight text-gray-100">Portal Login</h2>
-          <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">Academia_HuB Control Center</p>
+          <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-semibold">NEXUS_Hub Control Center</p>
         </div>
 
         {/* Error Message Section */}

@@ -100,7 +100,7 @@ export default function HomePage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-4xl sm:text-6xl font-black mb-12 tracking-wider"
         >
-          ACADEMIA_<span className="bg-gradient-to-r from-red-600 to-amber-400 bg-clip-text text-transparent">HUB</span>
+          NEXUS_<span className="bg-gradient-to-r from-red-600 to-amber-400 bg-clip-text text-transparent">HUB</span>
         </motion.h1>
 
         {/* Enter Portal CTA Button */}
