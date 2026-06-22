@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Sun, Moon, GraduationCap } from "lucide-react";
+import { ArrowRight, GraduationCap } from "lucide-react";
 
 // Generate 20 random particles that will float upwards in the background
 const particles = Array.from({ length: 20 }).map((_, i) => ({
@@ -14,13 +14,9 @@ const particles = Array.from({ length: 20 }).map((_, i) => ({
 
 export default function HomePage() {
   const navigate = useNavigate();
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", "dark");
-    localStorage.setItem("theme", "dark");
-  }, []);
 
   return (
-    <div className="relative w-screen h-screen bg-[#08090c] text-white flex items-center justify-center overflow-hidden font-sans">
+    <div className="relative w-screen h-screen bg-app text-white flex items-center justify-center overflow-hidden font-sans">
       
       {/* Drifting Glow Orbs */}
       <motion.div 
@@ -34,7 +30,7 @@ export default function HomePage() {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-red-600/10 rounded-full blur-[110px] pointer-events-none" 
+        className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[110px] pointer-events-none" 
       />
       <motion.div 
         animate={{
@@ -47,7 +43,7 @@ export default function HomePage() {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-amber-600/10 rounded-full blur-[130px] pointer-events-none" 
+        className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none" 
       />
 
       {/* Tech Grid Overlay */}
@@ -74,7 +70,7 @@ export default function HomePage() {
               width: `${p.size}px`,
               height: `${p.size}px`,
             }}
-            className="absolute rounded-full bg-gradient-to-tr from-red-600 to-amber-500 blur-[0.5px]"
+            className="absolute rounded-full bg-gradient-to-tr from-primary to-indigo-400 blur-[0.5px]"
           />
         ))}
       </div>
@@ -88,7 +84,7 @@ export default function HomePage() {
             scale: { duration: 3, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" },
             opacity: { duration: 0.6 }
           }}
-          className="w-20 h-20 bg-[#161b22]/90 border border-gray-800 rounded-3xl flex items-center justify-center shadow-2xl shadow-red-600/10 mb-8 text-red-500"
+          className="w-20 h-20 bg-card border border-border-card rounded-2xl flex items-center justify-center shadow-lg shadow-primary/10 mb-8 text-primary"
         >
           <GraduationCap size={40} />
         </motion.div>
@@ -100,16 +96,18 @@ export default function HomePage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-4xl sm:text-6xl font-black mb-12 tracking-wider"
         >
-          NEXUS_<span className="bg-gradient-to-r from-red-600 to-amber-400 bg-clip-text text-transparent">HUB</span>
+          NEXUS_<span className="text-primary">HUB</span>
         </motion.h1>
 
         {/* Enter Portal CTA Button */}
         <motion.button
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.3 }}
           onClick={() => navigate("/login")}
-          className="px-10 py-5 rounded-2xl bg-gradient-to-r from-red-700 to-amber-600 text-white font-bold text-base hover:from-red-600 hover:to-amber-500 shadow-2xl shadow-red-700/20 flex items-center gap-3 transition-transform transform hover:scale-105 border border-white/5"
+          className="px-10 py-4 rounded-xl bg-primary text-white font-bold text-base hover:bg-primary-hover shadow-lg shadow-primary/20 flex items-center gap-3 transition-colors border border-transparent"
         >
           <span>Entry</span>
           <ArrowRight size={18} />

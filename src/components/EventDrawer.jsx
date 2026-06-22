@@ -42,7 +42,7 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
     const c = campusColorMapping[colors] ? {
         bg: `bg-${campusColorMapping[colors].replace('bg-', '')}`,
         text: `text-${campusColorMapping[colors].replace('bg-', '').replace('/10', '')}`
-    } : { bg: "bg-gray-800", text: "text-gray-400" };
+    } : { bg: "bg-card", text: "text-muted" };
 
     const colorTheme = {
         purple: { bg: "bg-purple-500/10", border: "border-purple-500/20", text: "text-purple-500", glow: "shadow-purple-500/20" },
@@ -50,7 +50,7 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
         blue: { bg: "bg-blue-500/10", border: "border-blue-500/20", text: "text-blue-500", glow: "shadow-blue-500/20" },
         green: { bg: "bg-green-500/10", border: "border-green-500/20", text: "text-green-500", glow: "shadow-green-500/20" },
         orange: { bg: "bg-orange-500/10", border: "border-orange-500/20", text: "text-orange-500", glow: "shadow-orange-500/20" },
-        gray: { bg: "bg-gray-500/10", border: "border-gray-500/20", text: "text-gray-500", glow: "shadow-gray-500/20" }
+        gray: { bg: "bg-gray-500/10", border: "border-gray-500/20", text: "text-muted", glow: "shadow-gray-500/20" }
     };
 
     const theme = colorTheme[colors] || colorTheme.gray;
@@ -93,11 +93,11 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                         initial={{ x: "100%" }} 
                         animate={{ x: 0 }} 
                         exit={{ x: "100%" }} 
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="relative z-10 w-full max-w-md h-full bg-[#161b22] border-l border-gray-800 shadow-2xl flex flex-col overflow-hidden"
+                        transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+                        className="relative z-10 w-full max-w-[500px] h-full bg-sidebar border-l border-border-card shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
-                        <div className={`p-6 sm:p-8 border-b border-gray-800 bg-gradient-to-b from-[#1c2128] to-[#161b22] relative overflow-hidden`}>
+                        <div className={`p-6 sm:p-8 border-b border-border-card bg-sidebar relative overflow-hidden`}>
                             <div className={`absolute top-0 left-0 w-full h-1 ${theme.bg.replace('/10', '')}`} />
                             <div className="flex items-start justify-between mb-4 relative z-10">
                                 <div className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border ${theme.bg} ${theme.text} ${theme.border}`}>
@@ -105,25 +105,25 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {(user?.role === 'central_admin' || (user?.role === 'campus_admin' && user?.university === event.university) || user?.role === 'event_coordinator') && (
-                                        <button onClick={onEdit} className="p-2 bg-[#1c2128] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors">
+                                        <button onClick={onEdit} className="p-2 bg-card hover:bg-white/10 text-muted hover:text-white rounded-xl transition-colors">
                                             <Edit2 size={16} />
                                         </button>
                                     )}
                                     {user?.role === 'central_admin' && (
-                                        <button onClick={onDelete} className="p-2 bg-[#1c2128] hover:bg-red-500/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors">
+                                        <button onClick={onDelete} className="p-2 bg-card hover:bg-red-500/20 text-muted hover:text-red-500 rounded-xl transition-colors">
                                             <Trash2 size={16} />
                                         </button>
                                     )}
-                                    <button onClick={onClose} className="p-2 bg-[#1c2128] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors ml-2">
+                                    <button onClick={onClose} className="p-2 bg-card hover:bg-white/10 text-muted hover:text-white rounded-xl transition-colors ml-2">
                                         <X size={16} />
                                     </button>
                                 </div>
                             </div>
                             <h2 className="text-2xl font-bold text-white mb-2 relative z-10">{event.title}</h2>
-                            <div className="flex items-center gap-2 text-sm text-gray-400 font-medium relative z-10">
-                                <span className="bg-gray-800 px-2 py-0.5 rounded text-gray-300">{event.type}</span>
+                            <div className="flex items-center gap-2 text-sm text-muted font-medium relative z-10">
+                                <span className="bg-card px-2 py-0.5 rounded text-gray-300">{event.type}</span>
                                 <span>•</span>
-                                <span className={`flex items-center gap-1 ${event.status === 'Completed' ? 'text-green-500' : event.status === 'Cancelled' ? 'text-red-500' : event.status === 'In Progress' ? 'text-blue-500' : event.status === 'Postponed' ? 'text-orange-500' : 'text-gray-400'}`}>
+                                <span className={`flex items-center gap-1 ${event.status === 'Completed' ? 'text-green-500' : event.status === 'Cancelled' ? 'text-red-500' : event.status === 'In Progress' ? 'text-blue-500' : event.status === 'Postponed' ? 'text-orange-500' : 'text-muted'}`}>
                                     {event.status === 'Completed' ? <CheckCircle2 size={14} /> : event.status === 'Cancelled' ? <X size={14} /> : event.status === 'In Progress' ? <Clock size={14} /> : <AlertCircle size={14} />}
                                     {event.status || 'Scheduled'}
                                 </span>
@@ -135,15 +135,15 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                             
                             {/* Date & Time */}
                             <div className="space-y-4">
-                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Schedule</h4>
-                                <div className="bg-[#1c2128]/50 p-4 rounded-2xl border border-gray-800 flex items-start gap-4">
+                                <h4 className="text-xs font-bold text-muted uppercase tracking-widest">Schedule</h4>
+                                <div className="bg-app p-4 rounded-2xl border border-border-card flex items-start gap-4">
                                     <div className={`p-3 rounded-xl ${theme.bg} ${theme.text}`}>
                                         <Calendar size={20} />
                                     </div>
                                     <div>
                                         <p className="text-white font-medium">{event.date.split('T')[0]} {event.end_date && event.end_date !== event.date ? `to ${event.end_date.split('T')[0]}` : ''}</p>
                                         {(event.start_time || event.end_time) && (
-                                            <p className="text-sm text-gray-500 mt-0.5">{event.start_time || 'TBD'} - {event.end_time || 'TBD'}</p>
+                                            <p className="text-sm text-muted mt-0.5">{event.start_time || 'TBD'} - {event.end_time || 'TBD'}</p>
                                         )}
                                     </div>
                                 </div>
@@ -152,16 +152,16 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                             {/* Logistics */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Venue / Link</h4>
+                                    <h4 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-2">Venue / Link</h4>
                                     <div className="flex items-center gap-2 text-sm text-gray-300">
-                                        <MapPin size={14} className="text-gray-500" />
+                                        <MapPin size={14} className="text-muted" />
                                         <span>{event.venue || 'Not specified'}</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Coordinator</h4>
+                                    <h4 className="text-[10px] font-bold text-muted uppercase tracking-widest mb-2">Coordinator</h4>
                                     <div className="flex items-center gap-2 text-sm text-gray-300">
-                                        <User size={14} className="text-gray-500" />
+                                        <User size={14} className="text-muted" />
                                         <span>{event.coordinator || 'Unassigned'}</span>
                                     </div>
                                 </div>
@@ -170,8 +170,8 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                             {/* Description */}
                             {event.description && (
                                 <div>
-                                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Description</h4>
-                                    <p className="text-sm text-gray-300 leading-relaxed bg-[#1c2128]/30 p-4 rounded-2xl border border-gray-800/50">
+                                    <h4 className="text-xs font-bold text-muted uppercase tracking-widest mb-3">Description</h4>
+                                    <p className="text-sm text-gray-300 leading-relaxed bg-card/30 p-4 rounded-2xl border border-border-card/50">
                                         {event.description}
                                     </p>
                                 </div>
@@ -191,17 +191,17 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
 
                             {/* SOP Tasks Section */}
                             {eventTasks && eventTasks.length > 0 && (
-                                <div className="border-t border-gray-800 pt-8 mt-8">
+                                <div className="border-t border-border-card pt-8 mt-8">
                                     <div className="flex items-center justify-between mb-4">
                                         <h4 className="text-sm font-bold text-white flex items-center gap-2">
                                             <LayoutList size={18} className="text-blue-500" />
                                             SOP Progress
                                         </h4>
-                                        <span className="text-xs font-bold text-gray-400">
+                                        <span className="text-xs font-bold text-muted">
                                             {Math.round((eventTasks.filter(t => t.status === 'Completed').length / eventTasks.length) * 100)}% Complete
                                         </span>
                                     </div>
-                                    <div className="w-full bg-gray-800 rounded-full h-1.5 mb-6 overflow-hidden">
+                                    <div className="w-full bg-card rounded-full h-1.5 mb-6 overflow-hidden">
                                         <div 
                                             className="bg-blue-500 h-1.5 rounded-full transition-all duration-500" 
                                             style={{ width: `${(eventTasks.filter(t => t.status === 'Completed').length / eventTasks.length) * 100}%` }}
@@ -220,7 +220,7 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                                     <div className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0"><div className="w-2 h-2 rounded-full bg-amber-500"></div></div>
                                                 )}
                                                 <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm ${task.status === 'Completed' ? 'text-gray-500 line-through' : 'text-gray-200'} truncate`}>{task.title}</p>
+                                                    <p className={`text-sm ${task.status === 'Completed' ? 'text-muted line-through' : 'text-gray-200'} truncate`}>{task.title}</p>
                                                 </div>
                                                 {task.status === 'Pending' && (
                                                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Pending</span>
@@ -239,7 +239,7 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
 
                             {/* Feedback Section */}
                             {event.status === 'Completed' && (
-                                <div className="border-t border-gray-800 pt-8 mt-8">
+                                <div className="border-t border-border-card pt-8 mt-8">
                                     <h4 className="text-sm font-bold text-white flex items-center gap-2 mb-4">
                                         <FileText size={18} className="text-green-500" />
                                         Event Feedback
@@ -250,16 +250,16 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                             <div className="bg-green-500/5 border border-green-500/20 p-4 rounded-2xl">
                                                 <div className="grid grid-cols-2 gap-4 mb-4">
                                                     <div>
-                                                        <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Attendance</span>
+                                                        <span className="text-[10px] text-muted uppercase tracking-widest block mb-1">Attendance</span>
                                                         <span className="text-lg font-bold text-white">{event.attendance_count}</span>
                                                     </div>
                                                     <div>
-                                                        <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Outcome</span>
+                                                        <span className="text-[10px] text-muted uppercase tracking-widest block mb-1">Outcome</span>
                                                         <span className="text-sm font-medium text-white">{event.event_outcome || 'N/A'}</span>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Summary</span>
+                                                    <span className="text-[10px] text-muted uppercase tracking-widest block mb-1">Summary</span>
                                                     <p className="text-sm text-gray-300">{event.feedback_summary}</p>
                                                 </div>
                                                 {event.photos_link && (
@@ -271,32 +271,32 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                         </div>
                                     ) : (
                                         isSubmittingFeedback ? (
-                                            <div className="space-y-4 bg-[#1c2128]/50 p-5 rounded-2xl border border-gray-800">
+                                            <div className="space-y-4 bg-app p-5 rounded-2xl border border-border-card">
                                                 <div>
-                                                    <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Feedback Summary *</label>
+                                                    <label className="text-[10px] text-muted uppercase tracking-widest block mb-2">Feedback Summary *</label>
                                                     <textarea 
                                                         value={feedbackData.feedback_summary}
                                                         onChange={e => setFeedbackData({...feedbackData, feedback_summary: e.target.value})}
-                                                        className="w-full bg-[#161b22] border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-green-500 min-h-[80px]"
+                                                        className="w-full bg-app border border-hover rounded-xl p-3 text-white text-sm outline-none focus:border-green-500 min-h-[80px]"
                                                         placeholder="How did the event go?"
                                                     />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Attendance *</label>
+                                                        <label className="text-[10px] text-muted uppercase tracking-widest block mb-2">Attendance *</label>
                                                         <input 
                                                             type="number"
                                                             value={feedbackData.attendance_count}
                                                             onChange={e => setFeedbackData({...feedbackData, attendance_count: e.target.value})}
-                                                            className="w-full bg-[#161b22] border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
+                                                            className="w-full bg-app border border-hover rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Outcome</label>
+                                                        <label className="text-[10px] text-muted uppercase tracking-widest block mb-2">Outcome</label>
                                                         <select 
                                                             value={feedbackData.event_outcome}
                                                             onChange={e => setFeedbackData({...feedbackData, event_outcome: e.target.value})}
-                                                            className="w-full bg-[#161b22] border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
+                                                            className="w-full bg-app border border-hover rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
                                                         >
                                                             <option value="">Select...</option>
                                                             <option value="Successful">Successful</option>
@@ -306,18 +306,18 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="text-[10px] text-gray-500 uppercase tracking-widest block mb-2">Photos Link</label>
+                                                    <label className="text-[10px] text-muted uppercase tracking-widest block mb-2">Photos Link</label>
                                                     <input 
                                                         type="url"
                                                         value={feedbackData.photos_link}
                                                         onChange={e => setFeedbackData({...feedbackData, photos_link: e.target.value})}
-                                                        className="w-full bg-[#161b22] border border-gray-700 rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
+                                                        className="w-full bg-app border border-hover rounded-xl p-3 text-white text-sm outline-none focus:border-green-500"
                                                         placeholder="https://..."
                                                     />
                                                 </div>
                                                 <div className="flex gap-2 pt-2">
                                                     <button onClick={handleFeedbackSubmit} className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl transition-colors text-sm">Submit</button>
-                                                    <button onClick={() => setIsSubmittingFeedback(false)} className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2.5 rounded-xl transition-colors text-sm">Cancel</button>
+                                                    <button onClick={() => setIsSubmittingFeedback(false)} className="flex-1 bg-card hover:bg-gray-700 text-white font-bold py-2.5 rounded-xl transition-colors text-sm">Cancel</button>
                                                 </div>
                                             </div>
                                         ) : (

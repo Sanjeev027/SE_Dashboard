@@ -73,21 +73,21 @@ const getColorClasses = (color) => {
         bg: "bg-gray-500/10",
         border: "border-gray-500",
         borderLight: "border-gray-500/20",
-        text: "text-gray-500"
+        text: "text-muted"
     };
 };
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
     <motion.div
-        whileHover={{ x: 5, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+        whileHover={{ x: 3, backgroundColor: "rgba(99,102,241,0.05)" }}
         onClick={onClick}
-        className={`relative flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl transition-colors ${active ? "text-white" : "text-gray-400"
+        className={`relative flex items-center gap-3 px-4 py-3 cursor-pointer rounded-r-xl transition-colors ${active ? "text-primary border-l-4 border-primary" : "text-muted border-l-4 border-transparent hover:bg-hover rounded-xl"
             }`}
     >
         {active && (
             <motion.div
                 layoutId="activeTabHighlight"
-                className="absolute inset-0 bg-red-600 shadow-lg rounded-xl"
+                className="absolute inset-0 bg-primary/15 rounded-r-xl"
                 initial={false}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
@@ -145,10 +145,10 @@ const CustomDatePicker = ({ value, onChange, placeholder = "Select Date", disabl
         <div ref={datePickerRef} className="relative w-full">
             <div 
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none transition-colors text-sm sm:text-base flex justify-between items-center select-none ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-red-600/50 focus:border-red-600"}`}
+                className={`w-full bg-card border border-border-card rounded-2xl p-4 text-gray-300 outline-none transition-colors text-sm sm:text-base flex justify-between items-center select-none ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-primary/50 focus:border-primary"}`}
             >
                 <span>{value || placeholder}</span>
-                <CalendarIcon size={18} className={`transition-colors duration-300 ${isOpen ? "text-red-500" : "text-gray-500"}`} />
+                <CalendarIcon size={18} className={`transition-colors duration-300 ${isOpen ? "text-red-500" : "text-muted"}`} />
             </div>
             <AnimatePresence>
                 {isOpen && (
@@ -157,22 +157,22 @@ const CustomDatePicker = ({ value, onChange, placeholder = "Select Date", disabl
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute z-50 w-[280px] sm:w-[320px] left-0 mt-2 bg-[#161b22] border border-gray-800 rounded-3xl shadow-2xl p-4"
+                        className="absolute z-50 w-[280px] sm:w-[320px] left-0 mt-2 bg-[#161b22] border border-border-card rounded-3xl shadow-2xl p-4"
                     >
                         <div className="flex items-center justify-between mb-4">
-                            <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-colors">
+                            <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-800 rounded-xl text-muted hover:text-white transition-colors">
                                 <ChevronLeft size={16} />
                             </button>
                             <span className="text-white font-bold text-sm">
                                 {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
                             </span>
-                            <button onClick={handleNextMonth} className="p-2 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-colors">
+                            <button onClick={handleNextMonth} className="p-2 hover:bg-gray-800 rounded-xl text-muted hover:text-white transition-colors">
                                 <ChevronRight size={16} />
                             </button>
                         </div>
                         <div className="grid grid-cols-7 gap-1 mb-2">
                             {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                                <div key={d} className="text-center text-[10px] font-bold text-gray-500 uppercase tracking-widest">{d}</div>
+                                <div key={d} className="text-center text-[10px] font-bold text-muted uppercase tracking-widest">{d}</div>
                             ))}
                         </div>
                         <div className="grid grid-cols-7 gap-1">
@@ -185,7 +185,7 @@ const CustomDatePicker = ({ value, onChange, placeholder = "Select Date", disabl
                                         key={idx}
                                         onClick={() => handleSelectDate(day)}
                                         className={`p-2 text-center text-xs sm:text-sm rounded-xl cursor-pointer transition-all flex items-center justify-center h-8 sm:h-10 font-medium select-none ${
-                                            isSelected ? "bg-red-600 text-white shadow-lg shadow-red-600/30 ring-2 ring-red-600 ring-offset-2 ring-offset-[#161b22]" 
+                                            isSelected ? "bg-primary text-white shadow-lg shadow-primary/30 ring-2 ring-primary ring-offset-2 ring-offset-[#161b22]" 
                                             : isToday ? "bg-white/10 text-white" 
                                             : "text-gray-300 hover:bg-gray-800 hover:text-white"
                                         }`}
@@ -690,10 +690,10 @@ export default function Dashboard() {
         }
     };
 
-    if (!user) return <div className="h-screen w-screen bg-[#0f1115] flex items-center justify-center text-white">Loading...</div>;
+    if (!user) return <div className="h-screen w-screen bg-app flex items-center justify-center text-white">Loading...</div>;
 
     return (
-        <div className="flex h-screen w-screen bg-[#0f1115] text-white overflow-hidden font-sans relative">
+        <div className="flex h-screen w-screen bg-app text-white overflow-hidden font-sans relative">
             {/* Mobile Sidebar Backdrop */}
             {isSidebarOpen && (
                 <div 
@@ -704,13 +704,13 @@ export default function Dashboard() {
 
             {/* Sidebar */}
             <aside 
-                className={`fixed inset-y-0 left-0 z-40 w-72 border-r border-gray-800 flex flex-col p-6 bg-[#161b22] transition-transform duration-300 lg:static lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-40 w-72 border-r border-border-card flex flex-col p-6 bg-sidebar transition-transform duration-300 lg:static lg:translate-x-0 ${
                     isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
                 <div className="flex items-center justify-between mb-10 px-2">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#1c2128] border border-gray-800 rounded-lg flex items-center justify-center shadow-lg shadow-red-600/5 text-red-500">
+                        <div className="w-10 h-10 bg-card border border-border-card rounded-lg flex items-center justify-center shadow-lg shadow-red-600/5 text-red-500">
                             <GraduationCap size={20} />
                         </div>
                         <h1 className="text-xl font-bold tracking-tight">NEXUS_Hub</h1>
@@ -718,7 +718,7 @@ export default function Dashboard() {
                     {/* Close button for mobile sidebar */}
                     <button 
                         onClick={() => setIsSidebarOpen(false)} 
-                        className="p-1 text-gray-400 hover:text-white lg:hidden bg-transparent border-none"
+                        className="p-1 text-muted hover:text-white lg:hidden bg-transparent border-none"
                     >
                         <X size={20} />
                     </button>
@@ -729,7 +729,7 @@ export default function Dashboard() {
                         {isCentral ? <ShieldCheck size={12} /> : <Globe size={12} />}
                         {isCentral ? "Admin" : "PM/PMA"}
                     </div>
-                    {!isCentral && <p className="text-[11px] text-gray-500 mt-2 font-medium">{user.university}</p>}
+                    {!isCentral && <p className="text-[11px] text-muted mt-2 font-medium">{user.university}</p>}
                 </div>
 
                 <nav className="flex-1 space-y-2">
@@ -755,20 +755,20 @@ export default function Dashboard() {
                     </LayoutGroup>
                 </nav>
 
-                <div className="mt-auto pt-6 border-t border-gray-800 space-y-2">
+                <div className="mt-auto pt-6 border-t border-border-card space-y-2">
                     <div className="flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-orange-500 flex items-center justify-center font-bold">
                             {(user.loginId || "User")[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold truncate">{user.loginId || "User"}</p>
-                            <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                            <p className="text-xs text-muted capitalize">{user.role}</p>
                         </div>
                     </div>
 
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-red-600/10 rounded-xl transition-all group bg-transparent border-none"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-muted hover:text-white hover:bg-primary/10 rounded-xl transition-all group bg-transparent border-none"
                     >
                         <LogOut size={20} className="group-hover:text-red-500 transition-colors" />
                         <span className="font-medium">Logout</span>
@@ -776,19 +776,19 @@ export default function Dashboard() {
                 </div>
             </aside>
 
-            <main className="flex-1 flex flex-col overflow-hidden bg-[#0f1115]">
+            <main className="flex-1 flex flex-col overflow-hidden bg-app">
                 {/* Header */}
-                <header className="h-20 border-b border-gray-800 flex items-center justify-between px-4 sm:px-8 bg-[#161b22]/50 backdrop-blur-md shrink-0">
+                <header className="h-20 border-b border-border-card flex items-center justify-between px-4 sm:px-8 bg-[#161b22]/50 backdrop-blur-md shrink-0">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1">
                         {/* Hamburger Menu Toggle on Mobile */}
                         <button 
                             onClick={() => setIsSidebarOpen(true)} 
-                            className="p-2 -ml-2 text-gray-400 hover:text-white lg:hidden bg-transparent border-none"
+                            className="p-2 -ml-2 text-muted hover:text-white lg:hidden bg-transparent border-none"
                         >
                             <Menu size={24} />
                         </button>
                         <div className="flex items-center gap-4 bg-gray-800/50 px-4 py-2 rounded-xl w-full max-w-xs sm:max-w-sm">
-                            <Search size={18} className="text-gray-500" />
+                            <Search size={18} className="text-muted" />
                             <input type="text" placeholder={`Search ${activeTab === "Users" ? "users" : (isCentral ? 'all' : 'university')} events...`} className="bg-transparent border-none outline-none text-sm w-full" />
                         </div>
                     </div>
@@ -796,7 +796,7 @@ export default function Dashboard() {
                         <button onClick={() => {
                             setNewUniversity(isCentral ? "All Universities" : user?.university || "");
                             setIsEventModalOpen(true);
-                        }} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-all px-3 sm:px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-red-600/20 text-xs sm:text-sm">
+                        }} className="flex items-center gap-2 bg-primary hover:bg-primary-hover transition-all px-3 sm:px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-primary/20 text-xs sm:text-sm">
                             <Plus size={18} />
                             <span>Add Schedule</span>
                         </button>
@@ -828,7 +828,7 @@ export default function Dashboard() {
                                     <FileText className="text-red-500 animate-pulse" size={32} />
                                     Report Submission Tracker
                                 </h2>
-                                <p className="text-sm text-gray-500">Track, monitor, and submit event execution reports for all completed activities.</p>
+                                <p className="text-sm text-muted">Track, monitor, and submit event execution reports for all completed activities.</p>
                             </div>
 
                             {/* Summary Cards */}
@@ -871,9 +871,9 @@ export default function Dashboard() {
 
                                 return (
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
-                                        <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
+                                        <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
                                             <div>
-                                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total Completed Events</p>
+                                                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Total Completed Events</p>
                                                 <p className="text-2xl font-black text-white">{totalCompletedCount}</p>
                                             </div>
                                             <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500">
@@ -881,9 +881,9 @@ export default function Dashboard() {
                                             </div>
                                         </div>
 
-                                        <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
+                                        <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
                                             <div>
-                                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Reports Submitted</p>
+                                                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Reports Submitted</p>
                                                 <p className="text-2xl font-black text-green-500">{submittedCount}</p>
                                             </div>
                                             <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-500">
@@ -891,9 +891,9 @@ export default function Dashboard() {
                                             </div>
                                         </div>
 
-                                        <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
+                                        <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md">
                                             <div>
-                                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Reports Pending</p>
+                                                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Reports Pending</p>
                                                 <p className="text-2xl font-black text-red-500">{pendingCount}</p>
                                             </div>
                                             <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500">
@@ -905,13 +905,13 @@ export default function Dashboard() {
                             })()}
 
                             {/* Reports List */}
-                            <div className="bg-[#161b22]/30 border border-gray-800 rounded-[2rem] p-6 flex flex-col gap-6 flex-1 overflow-hidden min-h-[400px]">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4 shrink-0">
+                            <div className="bg-[#161b22]/30 border border-border-card rounded-[2rem] p-6 flex flex-col gap-6 flex-1 overflow-hidden min-h-[400px]">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-card pb-4 shrink-0">
                                     <h3 className="font-bold text-base text-gray-200">Completed Events & Report Logs</h3>
                                     <div className="flex flex-wrap items-center gap-4">
                                         {/* Campus Filter */}
                                         <div className="flex items-center gap-2">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Campus:</span>
+                                            <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Campus:</span>
                                             {isCentral ? (
                                                 <CustomSelect 
                                                     value={selectedReportFilterUni} 
@@ -929,7 +929,7 @@ export default function Dashboard() {
                                                     className="w-40"
                                                 />
                                             ) : (
-                                                <div className="bg-gray-800/30 border border-gray-800/80 rounded-xl px-3 py-1.5 text-xs text-gray-400 font-semibold font-sans">
+                                                <div className="bg-gray-800/30 border border-border-card/80 rounded-xl px-3 py-1.5 text-xs text-muted font-semibold font-sans">
                                                     {user.university}
                                                 </div>
                                             )}
@@ -937,7 +937,7 @@ export default function Dashboard() {
 
                                         {/* Event Type Filter */}
                                         <div className="flex items-center gap-2">
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Event Type:</span>
+                                            <span className="text-[10px] font-bold text-muted uppercase tracking-wider">Event Type:</span>
                                             <CustomSelect 
                                                 value={selectedReportFilterType} 
                                                 onChange={setSelectedReportFilterType}
@@ -991,17 +991,17 @@ export default function Dashboard() {
                                             };
 
                                             return (
-                                                <div key={uni} className="bg-[#1c2128]/20 border border-gray-800/80 rounded-[1.5rem] p-5 flex flex-col gap-4 mb-6">
+                                                <div key={uni} className="bg-hover border border-border-card/80 rounded-[1.5rem] p-5 flex flex-col gap-4 mb-6">
                                                     {/* Group Header */}
                                                     <div 
                                                         onClick={() => toggleUniExpand(uni)}
-                                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800/60 pb-3 cursor-pointer select-none hover:opacity-80 transition-all"
+                                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-card/60 pb-3 cursor-pointer select-none hover:opacity-80 transition-all"
                                                     >
                                                         <div className="flex items-center gap-3">
-                                                            {isExpanded ? <ChevronDown size={18} className="text-gray-500 shrink-0" /> : <ChevronRight size={18} className="text-gray-500 shrink-0" />}
+                                                            {isExpanded ? <ChevronDown size={18} className="text-muted shrink-0" /> : <ChevronRight size={18} className="text-muted shrink-0" />}
                                                             <div>
                                                                 <h4 className="text-sm font-black text-red-500 uppercase tracking-widest">{uni}</h4>
-                                                                <p className="text-[11px] text-gray-500">Execution performance tracking for this campus (Click to {isExpanded ? 'collapse' : 'expand'})</p>
+                                                                <p className="text-[11px] text-muted">Execution performance tracking for this campus (Click to {isExpanded ? 'collapse' : 'expand'})</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-2">
@@ -1026,14 +1026,14 @@ export default function Dashboard() {
                                                                     const reportContent = report ? report.report_content : null;
 
                                                                     return (
-                                                                        <div key={event.id} className="bg-[#1c2128]/50 p-4 rounded-xl border border-gray-800/60 hover:border-gray-700/80 transition-colors flex flex-col gap-3">
+                                                                        <div key={event.id} className="bg-app p-4 rounded-xl border border-border-card/60 hover:border-hover/80 transition-colors flex flex-col gap-3">
                                                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                                                                 <div className="space-y-1">
                                                                                     <div className="flex items-center gap-2">
-                                                                                        <span className="text-[8px] font-bold uppercase px-2 py-0.5 rounded bg-gray-800/80 text-gray-400 border border-gray-700/50">
+                                                                                        <span className="text-[8px] font-bold uppercase px-2 py-0.5 rounded bg-gray-800/80 text-muted border border-hover/50">
                                                                                             {event.type}
                                                                                         </span>
-                                                                                        <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                                                                                        <span className="text-[10px] text-muted font-semibold flex items-center gap-1">
                                                                                             <Clock size={11} />
                                                                                             {event.date.split('T')[0]} {event.end_date && event.end_date !== event.date ? `to ${event.end_date.split('T')[0]}` : ''}
                                                                                         </span>
@@ -1061,7 +1061,7 @@ export default function Dashboard() {
                                                                                                         });
                                                                                                         setIsViewReportModalOpen(true);
                                                                                                     }}
-                                                                                                    className="p-2 bg-[#1c2128] border border-gray-800 hover:border-red-500/30 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all flex items-center justify-center bg-transparent border-none"
+                                                                                                    className="p-2 bg-card border border-border-card hover:border-red-500/30 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all flex items-center justify-center bg-transparent border-none"
                                                                                                     title="View Report"
                                                                                                 >
                                                                                                     <Eye size={16} />
@@ -1086,7 +1086,7 @@ export default function Dashboard() {
                                                                                                         });
                                                                                                         setIsViewReportModalOpen(true);
                                                                                                     }}
-                                                                                                    className="p-2 bg-[#1c2128] border border-gray-800 hover:border-red-500/30 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all flex items-center justify-center bg-transparent border-none"
+                                                                                                    className="p-2 bg-card border border-border-card hover:border-red-500/30 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all flex items-center justify-center bg-transparent border-none"
                                                                                                     title="View Status"
                                                                                                 >
                                                                                                     <Eye size={16} />
@@ -1101,7 +1101,7 @@ export default function Dashboard() {
                                                                                                 setSelectedEventForReport({ ...event, groupUni: uni });
                                                                                                 setIsReportModalOpen(true);
                                                                                             }}
-                                                                                            className="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all"
+                                                                                            className="bg-primary hover:bg-primary-hover text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all"
                                                                                         >
                                                                                             Submit Report
                                                                                         </button>
@@ -1132,11 +1132,11 @@ export default function Dashboard() {
                                     </span>
                                     University Portals
                                 </h2>
-                                <p className="text-sm text-gray-500">Track and filter day-wise activities, circulars, and events per university campus.</p>
+                                <p className="text-sm text-muted">Track and filter day-wise activities, circulars, and events per university campus.</p>
                             </div>
 
                             {/* University Selection Tabs */}
-                            <div className="flex items-center gap-2 border-b border-gray-800 pb-px overflow-x-auto scrollbar-none shrink-0">
+                            <div className="flex items-center gap-2 border-b border-border-card pb-px overflow-x-auto scrollbar-none shrink-0">
                                 {isCentral ? (
                                     ["All Universities", "VGU", "SGU", "ADYPU"].map(uni => (
                                         <button
@@ -1144,15 +1144,15 @@ export default function Dashboard() {
                                             onClick={() => setSelectedUniTab(uni)}
                                             className={`px-6 py-3 font-semibold text-sm border-b-2 bg-transparent border-t-0 border-x-0 transition-all shrink-0 ${
                                                 selectedUniTab === uni 
-                                                    ? "border-red-600 text-white bg-red-600/5" 
-                                                    : "border-transparent text-gray-500 hover:text-gray-300"
+                                                    ? "border-primary text-white bg-primary/5" 
+                                                    : "border-transparent text-muted hover:text-gray-300"
                                             }`}
                                         >
                                             {uni}
                                         </button>
                                     ))
                                 ) : (
-                                    <button className="px-6 py-3 font-semibold text-sm border-b-2 border-red-600 text-white bg-red-600/5 cursor-default border-t-0 border-x-0">
+                                    <button className="px-6 py-3 font-semibold text-sm border-b-2 border-primary text-white bg-primary/5 cursor-default border-t-0 border-x-0">
                                         {user.university} (Locked)
                                     </button>
                                 )}
@@ -1161,20 +1161,20 @@ export default function Dashboard() {
                             {/* University Detail View */}
                             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                                 {/* Left Side: Details & Stats Card */}
-                                <div className="bg-[#161b22]/50 border border-gray-800 rounded-3xl p-6 flex flex-col gap-6">
+                                <div className="bg-[#161b22]/50 border border-border-card rounded-3xl p-6 flex flex-col gap-6">
                                     <div className="w-full h-32 rounded-2xl bg-gradient-to-br from-red-700/20 to-amber-600/20 flex items-center justify-center relative overflow-hidden border border-red-500/10">
-                                        <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-2xl" />
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
                                         <GraduationCap size={48} className="relative z-10 animate-pulse text-red-500" />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-gray-100">{selectedUniTab}</h3>
-                                        <p className="text-xs text-gray-500 mt-1 capitalize">Operational Campus Portal</p>
+                                        <p className="text-xs text-muted mt-1 capitalize">Operational Campus Portal</p>
                                     </div>
 
                                     {/* Stats List */}
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-[#1c2128] border border-gray-800 p-4 rounded-2xl">
-                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Events</p>
+                                        <div className="bg-card border border-border-card p-4 rounded-2xl">
+                                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-1">Total Events</p>
                                             <p className="text-2xl font-black text-white">
                                                 {(() => {
                                                     const uniqueEvents = Object.values(events)
@@ -1189,8 +1189,8 @@ export default function Dashboard() {
                                                  })()}
                                              </p>
                                          </div>
-                                         <div className="bg-[#1c2128] border border-gray-800 p-4 rounded-2xl">
-                                             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Status</p>
+                                         <div className="bg-card border border-border-card p-4 rounded-2xl">
+                                             <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-1">Status</p>
                                              <p className="text-xs font-semibold text-green-500 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 w-fit mt-1">Active</p>
                                         </div>
                                     </div>
@@ -1206,8 +1206,8 @@ export default function Dashboard() {
                                                 onClick={() => setSelectedUniTypeFilter(type)}
                                                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all bg-transparent border-none shrink-0 ${
                                                     selectedUniTypeFilter === type 
-                                                        ? "bg-red-600 text-white shadow-lg" 
-                                                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                                                        ? "bg-primary text-white shadow-lg" 
+                                                        : "text-muted hover:text-white hover:bg-white/5"
                                                 }`}
                                             >
                                                 {type}
@@ -1234,7 +1234,7 @@ export default function Dashboard() {
 
                                             if (uniEvents.length === 0) {
                                                 return (
-                                                    <div className="h-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-800 rounded-3xl text-gray-700">
+                                                    <div className="h-48 flex flex-col items-center justify-center border-2 border-dashed border-border-card rounded-3xl text-gray-700">
                                                         <Activity className="mb-2 opacity-10" size={32} />
                                                         <p className="text-xs uppercase font-bold tracking-widest text-gray-600">No matching schedules</p>
                                                     </div>
@@ -1248,7 +1248,7 @@ export default function Dashboard() {
                                                         initial={{ opacity: 0, y: 10 }} 
                                                         animate={{ opacity: 1, y: 0 }} 
                                                         key={event.id} 
-                                                        className="bg-[#1c2128] p-5 rounded-2xl border border-gray-800 relative group flex items-start gap-4"
+                                                        className="bg-card p-5 rounded-2xl border border-border-card relative group flex items-start gap-4"
                                                     >
                                                         {/* Color Indicator */}
                                                         <div className={`w-1.5 h-12 rounded-full ${colors.border.replace('border-', 'bg-')} shrink-0 mt-1`} />
@@ -1257,7 +1257,7 @@ export default function Dashboard() {
                                                                 <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded ${colors.bg} ${colors.text} border ${colors.borderLight} w-fit`}>
                                                                     {event.type}
                                                                 </span>
-                                                                <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                                                                <span className="text-[10px] text-muted font-semibold flex items-center gap-1">
                                                                     <Clock size={11} />
                                                                     {event.date.split('T')[0]} {event.end_date && event.end_date !== event.date ? `to ${event.end_date.split('T')[0]}` : ''}
                                                                 </span>
@@ -1289,20 +1289,20 @@ export default function Dashboard() {
                                 <div className="flex items-center justify-between mb-6 sm:mb-8">
                                     <h2 className="text-xl sm:text-3xl font-bold">{months[currentDate.getMonth()]} {currentDate.getFullYear()}</h2>
                                     <div className="flex items-center bg-gray-800/50 rounded-xl p-1">
-                                        <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors"><ChevronLeft size={20} /></button>
-                                        <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors"><ChevronRight size={20} /></button>
+                                        <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-muted hover:text-gray-900 dark:text-muted dark:hover:text-white rounded-lg transition-colors"><ChevronLeft size={20} /></button>
+                                        <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))} className="p-2 bg-transparent border-none hover:bg-black/10 dark:hover:bg-white/10 text-muted hover:text-gray-900 dark:text-muted dark:hover:text-white rounded-lg transition-colors"><ChevronRight size={20} /></button>
                                     </div>
                                 </div>
 
                                 {/* Calendar Filters */}
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6 sm:mb-8 bg-[#1c2128]/50 p-4 rounded-xl border border-gray-800 backdrop-blur-sm">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6 sm:mb-8 bg-app p-4 rounded-xl border border-border-card backdrop-blur-sm">
                                     {isCentral && (
                                         <div className="flex items-center gap-2">
-                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">University</label>
+                                            <label className="text-[10px] font-bold text-muted uppercase tracking-widest">University</label>
                                             <select 
                                                 value={calendarUniFilter} 
                                                 onChange={(e) => setCalendarUniFilter(e.target.value)} 
-                                                className="bg-[#161b22] border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
+                                                className="bg-[#161b22] border border-hover text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
                                             >
                                                 <option value="All Universities">All Universities</option>
                                                 <option value="VGU">VGU</option>
@@ -1312,11 +1312,11 @@ export default function Dashboard() {
                                         </div>
                                     )}
                                     <div className="flex items-center gap-2">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Event Type</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Event Type</label>
                                         <select 
                                             value={calendarTypeFilter} 
                                             onChange={(e) => setCalendarTypeFilter(e.target.value)} 
-                                            className="bg-[#161b22] border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
+                                            className="bg-[#161b22] border border-hover text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
                                         >
                                             <option value="All">All Types</option>
                                             <option value="Circular">Circular</option>
@@ -1330,9 +1330,9 @@ export default function Dashboard() {
 
                                 {/* Stats Counter Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 sm:mb-8">
-                            <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
+                            <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total Events</p>
+                                            <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Total Events</p>
                                             <p className="text-2xl font-black text-white">
                                                 {(() => {
                                                     const year = currentDate.getFullYear();
@@ -1361,9 +1361,9 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
+                                    <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Events So Far</p>
+                                            <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Events So Far</p>
                                             <p className="text-2xl font-black text-white">
                                                 {(() => {
                                                     const year = currentDate.getFullYear();
@@ -1393,9 +1393,9 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-[#1c2128]/50 border border-gray-800 p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
+                                    <div className="bg-app border border-border-card p-5 rounded-2xl flex items-center justify-between backdrop-blur-md transition-all hover:border-red-500/30">
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Today's Events</p>
+                                            <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Today's Events</p>
                                             <p className="text-2xl font-black text-white">
                                                 {(() => {
                                                     const todayStr = getLocalDateStr(new Date());
@@ -1420,9 +1420,9 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-7 gap-px bg-gray-800 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                                <div className="grid grid-cols-7 gap-px bg-gray-800 border border-border-card rounded-2xl overflow-hidden shadow-2xl">
                                     {days.map(day => (
-                                        <div key={day} className="bg-[#161b22] p-2 sm:p-4 text-center text-[10px] sm:text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                                        <div key={day} className="bg-[#161b22] p-2 sm:p-4 text-center text-[10px] sm:text-sm font-semibold text-muted uppercase tracking-wider">
                                             {day}
                                         </div>
                                     ))}
@@ -1438,9 +1438,9 @@ export default function Dashboard() {
                                                 onClick={() => handleDateClick(day)} 
                                                 onDoubleClick={() => handleDateDoubleClick(day)}
                                                 className={`min-h-[70px] sm:min-h-[110px] p-1 sm:p-2 transition-all cursor-pointer border-t flex flex-col relative overflow-hidden hover:bg-white/5 ${
-                                                    isToday ? 'bg-red-950/20 border-red-500/40 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]' : 'bg-[#1c2128] border-gray-800'
+                                                    isToday ? 'bg-red-950/20 border-red-500/40 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]' : 'bg-card border-border-card'
                                                 } ${
-                                                    isSelected ? 'ring-2 ring-inset ring-red-600/50 bg-red-600/10' : ''
+                                                    isSelected ? 'ring-2 ring-inset ring-primary/50 bg-primary/10' : ''
                                                 }`}
                                             >
                                                 {isToday && <div className="absolute top-0 left-0 w-full h-1 bg-red-500" />}
@@ -1448,7 +1448,7 @@ export default function Dashboard() {
                                                     <>
                                                         <div className="flex justify-start mb-1 sm:mb-2 relative z-10">
                                                             <span className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-[10px] sm:text-xs font-bold ${
-                                                                isToday ? 'bg-red-600 text-white shadow-md shadow-red-600/40' : isSelected ? 'bg-white/10 text-white' : 'text-gray-500'
+                                                                isToday ? 'bg-primary text-white shadow-md shadow-primary/40' : isSelected ? 'bg-white/10 text-white' : 'text-muted'
                                                             }`}>{day}</span>
                                                         </div>
                                                         <div className="space-y-1">
@@ -1479,10 +1479,10 @@ export default function Dashboard() {
                             </div>
 
                             {/* Details Panel */}
-                            <div className="w-full xl:w-96 border-t xl:border-t-0 xl:border-l border-gray-800 bg-[#161b22]/30 p-4 sm:p-8 flex flex-col gap-6 sm:gap-8 shrink-0">
+                            <div className="w-full xl:w-96 border-t xl:border-t-0 xl:border-l border-border-card bg-[#161b22]/30 p-4 sm:p-8 flex flex-col gap-6 sm:gap-8 shrink-0">
                                 <div>
                                     <h3 className="text-base sm:text-lg font-bold mb-1">Schedule Details</h3>
-                                    <p className="text-xs sm:text-sm text-gray-500">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                                    <p className="text-xs sm:text-sm text-muted">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                                 </div>
                                 <div className="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar max-h-[350px] xl:max-h-none">
                                     {selectedDayEvents.length > 0 ? selectedDayEvents.map(event => (
@@ -1491,7 +1491,7 @@ export default function Dashboard() {
                                             animate={{ opacity: 1, x: 0 }} 
                                             key={event.id} 
                                             onClick={() => setSelectedEventDrawer(event)}
-                                            className="bg-[#1c2128] p-4 sm:p-5 rounded-2xl border border-gray-800 relative group cursor-pointer hover:border-gray-600 transition-colors"
+                                            className="bg-card p-4 sm:p-5 rounded-2xl border border-border-card relative group cursor-pointer hover:border-gray-600 transition-colors"
                                         >
                                             {(isCentral || event.university?.toLowerCase() === user?.university?.toLowerCase()) && (
                                                 <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }} className="absolute top-4 right-4 text-gray-600 hover:text-red-500 transition-colors opacity-100 xl:opacity-0 xl:group-hover:opacity-100 bg-transparent border-none z-10"><Trash2 size={16} /></button>
@@ -1507,12 +1507,12 @@ export default function Dashboard() {
                                                 })()}
                                                 <div>
                                                     <h4 className="font-bold text-gray-100 uppercase tracking-tight leading-tight text-sm sm:text-base">{event.title}</h4>
-                                                    <div className="flex items-center gap-1 mt-1 text-gray-500 text-xs"><GraduationCap size={12} /><span>{event.university}</span></div>
+                                                    <div className="flex items-center gap-1 mt-1 text-muted text-xs"><GraduationCap size={12} /><span>{event.university}</span></div>
                                                 </div>
                                             </div>
                                         </motion.div>
                                     )) : (
-                                        <div className="h-32 sm:h-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-800 rounded-3xl text-gray-700">
+                                        <div className="h-32 sm:h-48 flex flex-col items-center justify-center border-2 border-dashed border-border-card rounded-3xl text-gray-700">
                                             <Plus size={32} className="mb-2 opacity-10" /><p className="text-xs uppercase font-bold tracking-widest text-gray-600">No Events</p>
                                         </div>
                                     )}
@@ -1529,67 +1529,67 @@ export default function Dashboard() {
                 {isEventModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEventModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
+                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-border-card w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
                             <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">{editingEventId ? "Edit Event" : "New Event"}</h3>
                             <div className="space-y-4 mt-6 sm:mt-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Title *</label>
-                                    <input autoFocus disabled={user?.role === "event_coordinator"} placeholder="Enter event title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed" />
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Event Title *</label>
+                                    <input autoFocus disabled={user?.role === "event_coordinator"} placeholder="Enter event title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Date *</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Start Date *</label>
                                         <CustomDatePicker disabled={user?.role === "event_coordinator"} value={newEventDate} onChange={setNewEventDate} />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Date *</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">End Date *</label>
                                         <CustomDatePicker disabled={user?.role === "event_coordinator"} value={newEventEndDate} onChange={setNewEventEndDate} />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Time</label>
-                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newStartTime} onChange={(e) => setNewStartTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Start Time</label>
+                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newStartTime} onChange={(e) => setNewStartTime(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Time</label>
-                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newEndTime} onChange={(e) => setNewEndTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">End Time</label>
+                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newEndTime} onChange={(e) => setNewEndTime(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type *</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Type *</label>
                                         <CustomSelect disabled={user?.role === "event_coordinator"} value={newType} onChange={setNewType} options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University *</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">University *</label>
                                         <CustomSelect disabled={user?.role === "event_coordinator"} value={newUniversity} onChange={setNewUniversity} options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Venue / Link</label>
-                                        <input placeholder="Location" disabled={user?.role === "event_coordinator"} value={newVenue} onChange={(e) => setNewVenue(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Venue / Link</label>
+                                        <input placeholder="Location" disabled={user?.role === "event_coordinator"} value={newVenue} onChange={(e) => setNewVenue(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Coordinator</label>
-                                        <input placeholder="Name" disabled={user?.role === "event_coordinator"} value={newCoordinator} onChange={(e) => setNewCoordinator(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Coordinator</label>
+                                        <input placeholder="Name" disabled={user?.role === "event_coordinator"} value={newCoordinator} onChange={(e) => setNewCoordinator(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Status</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Event Status</label>
                                     <CustomSelect value={newStatus} onChange={setNewStatus} options={["Scheduled", "In Progress", "Completed", "Cancelled", "Postponed"]} />
                                 </div>
                                 {(newStatus === "Cancelled" || newStatus === "Postponed") && (
                                     <div>
                                         <label className={`text-[10px] font-bold uppercase mb-2 block tracking-widest ${newStatus === 'Cancelled' ? 'text-red-500' : 'text-orange-500'}`}>{newStatus} Remarks {newStatus === "Cancelled" && "*"}</label>
-                                        <textarea rows={2} placeholder="Reason..." value={newRemarks} onChange={(e) => setNewRemarks(e.target.value)} className={`w-full bg-[#1c2128] border rounded-2xl p-4 text-white outline-none text-sm resize-none ${newStatus === 'Cancelled' ? 'border-red-500/50 focus:border-red-500' : 'border-orange-500/50 focus:border-orange-500'}`} />
+                                        <textarea rows={2} placeholder="Reason..." value={newRemarks} onChange={(e) => setNewRemarks(e.target.value)} className={`w-full bg-card border rounded-2xl p-4 text-white outline-none text-sm resize-none ${newStatus === 'Cancelled' ? 'border-red-500/50 focus:border-red-500' : 'border-orange-500/50 focus:border-orange-500'}`} />
                                     </div>
                                 )}
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description *</label>
-                                    <textarea rows={3} disabled={user?.role === "event_coordinator"} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed" />
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Description *</label>
+                                    <textarea rows={3} disabled={user?.role === "event_coordinator"} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed" />
                                 </div>
                                 {!editingEventId && sopTasks.length > 0 && (
-                                    <div className="mt-4 border border-gray-800 rounded-2xl p-4 bg-[#161b22]">
+                                    <div className="mt-4 border border-border-card rounded-2xl p-4 bg-[#161b22]">
                                         <div className="flex items-center justify-between mb-3">
                                             <h4 className="text-sm font-bold text-white flex items-center gap-2">
                                                 <LayoutList size={16} className="text-blue-500" /> Linked SOP Tasks
@@ -1598,7 +1598,7 @@ export default function Dashboard() {
                                         </div>
                                         <div className="space-y-2">
                                             {sopTasks.map((task, index) => (
-                                                <div key={index} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${task.selected ? 'bg-[#1c2128] border-blue-500/30' : 'bg-[#1c2128]/50 border-gray-800/50 opacity-50'}`}>
+                                                <div key={index} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${task.selected ? 'bg-card border-blue-500/30' : 'bg-app border-border-card/50 opacity-50'}`}>
                                                     <input 
                                                         type="checkbox" 
                                                         checked={task.selected} 
@@ -1608,11 +1608,11 @@ export default function Dashboard() {
                                                             newTasks[index].selected = e.target.checked;
                                                             setSopTasks(newTasks);
                                                         }}
-                                                        className="w-4 h-4 rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-blue-600" 
+                                                        className="w-4 h-4 rounded bg-gray-900 border-hover text-blue-600 focus:ring-blue-600" 
                                                     />
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-xs font-semibold text-white truncate">{task.task_name} {task.is_mandatory && <span className="text-red-500 ml-1">*</span>}</p>
-                                                        <p className="text-[10px] text-gray-500 truncate">Due: {new Date(task.due_date).toDateString()}</p>
+                                                        <p className="text-[10px] text-muted truncate">Due: {new Date(task.due_date).toDateString()}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -1620,13 +1620,13 @@ export default function Dashboard() {
                                     </div>
                                 )}
                                 {!editingEventId && isSopLoading && (
-                                    <div className="mt-4 border border-gray-800 rounded-2xl p-6 bg-[#161b22] flex items-center justify-center">
-                                        <p className="text-xs font-semibold text-gray-500 animate-pulse">Loading SOP template...</p>
+                                    <div className="mt-4 border border-border-card rounded-2xl p-6 bg-[#161b22] flex items-center justify-center">
+                                        <p className="text-xs font-semibold text-muted animate-pulse">Loading SOP template...</p>
                                     </div>
                                 )}
                             </div>
-                            <div className="pt-6 mt-4 border-t border-gray-800">
-                                <button onClick={handleSaveEvent} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>
+                            <div className="pt-6 mt-4 border-t border-border-card">
+                                <button onClick={handleSaveEvent} className="w-full bg-primary py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-primary-hover shadow-xl shadow-primary/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>
                             </div>
                         </motion.div>
                     </div>
@@ -1637,85 +1637,85 @@ export default function Dashboard() {
                 {isReportModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsReportModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
+                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-border-card w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
                             <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">Submit Event Report</h3>
-                            <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider mb-6">Event: {selectedEventForReport?.title}</p>
+                            <p className="text-xs text-muted uppercase font-semibold tracking-wider mb-6">Event: {selectedEventForReport?.title}</p>
                             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Students Registered</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Students Registered</label>
                                         <input 
                                             type="number"
                                             min="0"
                                             placeholder="Registered count" 
                                             value={reportStudentsRegisteredCount} 
                                             onChange={(e) => setReportStudentsRegisteredCount(e.target.value)} 
-                                            className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans" 
+                                            className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans" 
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Students Attended</label>
+                                        <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Students Attended</label>
                                         <input 
                                             type="number"
                                             min="0"
                                             placeholder="Attended count" 
                                             value={reportStudentsAttendedCount} 
                                             onChange={(e) => setReportStudentsAttendedCount(e.target.value)} 
-                                            className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans" 
+                                            className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans" 
                                         />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Description</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Event Description</label>
                                     <textarea 
                                         rows={3}
                                         placeholder="Enter a detailed description of the event..." 
                                         value={reportDescriptionText} 
                                         onChange={(e) => setReportDescriptionText(e.target.value)} 
-                                        className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans resize-none" 
+                                        className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans resize-none" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Highlights of the Event</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Highlights of the Event</label>
                                     <textarea 
                                         rows={3}
                                         placeholder="What were the key achievements or outstanding highlights of this event?" 
                                         value={reportHighlightsText} 
                                         onChange={(e) => setReportHighlightsText(e.target.value)} 
-                                        className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans resize-none" 
+                                        className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans resize-none" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Feedback</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Feedback</label>
                                     <textarea 
                                         rows={3}
                                         placeholder="What was the overall feedback from participants?" 
                                         value={reportFeedbackText} 
                                         onChange={(e) => setReportFeedbackText(e.target.value)} 
-                                        className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans resize-none" 
+                                        className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans resize-none" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Feedback Summary</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Feedback Summary</label>
                                     <textarea 
                                         rows={3}
                                         placeholder="Enter feedback summary / outcomes" 
                                         value={reportFeedbackSummaryText} 
                                         onChange={(e) => setReportFeedbackSummaryText(e.target.value)} 
-                                        className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans resize-none" 
+                                        className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans resize-none" 
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Photos/Drive Link</label>
+                                    <label className="text-[10px] font-bold text-muted uppercase mb-2 block tracking-widest">Photos/Drive Link</label>
                                     <input 
                                         type="text"
                                         placeholder="Enter Google Drive or photos URL..." 
                                         value={reportDriveLinkText} 
                                         onChange={(e) => setReportDriveLinkText(e.target.value)} 
-                                        className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm font-sans" 
+                                        className="w-full bg-card border border-border-card rounded-2xl p-4 text-white outline-none focus:border-primary text-sm font-sans" 
                                     />
                                 </div>
-                                <button onClick={handleSubmittingReport} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base mt-2"><CheckCircle2 size={20} />Submit Report</button>
+                                <button onClick={handleSubmittingReport} className="w-full bg-primary py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-primary-hover shadow-xl shadow-primary/20 flex items-center justify-center gap-2 text-sm sm:text-base mt-2"><CheckCircle2 size={20} />Submit Report</button>
                             </div>
                         </motion.div>
                     </div>
@@ -1726,35 +1726,35 @@ export default function Dashboard() {
                 {isViewReportModalOpen && viewingReport && isCentral && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsViewReportModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
-                            <button onClick={() => setIsViewReportModalOpen(false)} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-white rounded-full bg-[#1c2128] border border-gray-800/80 transition-colors">
+                        <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-border-card w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
+                            <button onClick={() => setIsViewReportModalOpen(false)} className="absolute top-6 right-6 p-2 text-muted hover:text-white rounded-full bg-card border border-border-card/80 transition-colors">
                                 <X size={18} />
                             </button>
                             <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">View Event Report</h3>
                             <div className="space-y-4 mt-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
-                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Event Name</span>
+                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Event Name</span>
                                         <p className="text-white font-semibold text-sm truncate">{viewingReport.eventTitle}</p>
                                     </div>
                                     <div>
-                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Event Type</span>
-                                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700 inline-block mt-0.5">
+                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Event Type</span>
+                                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-hover inline-block mt-0.5">
                                             {viewingReport.eventType || "N/A"}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Campus</span>
+                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Campus</span>
                                         <p className="text-red-500 font-bold text-xs uppercase tracking-wider">{viewingReport.university}</p>
                                     </div>
                                     <div>
-                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Date of Event</span>
+                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Date of Event</span>
                                         <p className="text-gray-300 font-medium text-xs">{viewingReport.date}</p>
                                     </div>
                                 </div>
-                                <div className="border-t border-gray-800/80 pt-4">
+                                <div className="border-t border-border-card/80 pt-4">
                                     {viewingReport.reportContent ? (() => {
                                         let details = { feedback: "", feedbackSummary: "", highlights: "", studentsRegistered: "", studentsCount: "", description: "", driveLink: "" };
                                         try {
@@ -1796,45 +1796,45 @@ export default function Dashboard() {
                                             <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Students Registered</span>
-                                                        <p className="text-white font-bold text-base bg-[#1c2128] border border-gray-800 rounded-xl px-3.5 py-2 w-fit">
+                                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Students Registered</span>
+                                                        <p className="text-white font-bold text-base bg-card border border-border-card rounded-xl px-3.5 py-2 w-fit">
                                                             {details.studentsRegistered || "N/A"}
                                                         </p>
                                                     </div>
                                                     <div>
-                                                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Students Attended</span>
-                                                        <p className="text-white font-bold text-base bg-[#1c2128] border border-gray-800 rounded-xl px-3.5 py-2 w-fit">
+                                                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1">Students Attended</span>
+                                                        <p className="text-white font-bold text-base bg-card border border-border-card rounded-xl px-3.5 py-2 w-fit">
                                                             {details.studentsCount || "N/A"}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Event Description</span>
-                                                    <div className="bg-[#1c2128] border border-gray-800 rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1.5">Event Description</span>
+                                                    <div className="bg-card border border-border-card rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
                                                         <p className="text-xs sm:text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{details.description || "N/A"}</p>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Highlights of the Event</span>
-                                                    <div className="bg-[#1c2128] border border-gray-800 rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1.5">Highlights of the Event</span>
+                                                    <div className="bg-card border border-border-card rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
                                                         <p className="text-xs sm:text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{details.highlights || "N/A"}</p>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Feedback</span>
-                                                    <div className="bg-[#1c2128] border border-gray-800 rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1.5">Feedback</span>
+                                                    <div className="bg-card border border-border-card rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
                                                         <p className="text-xs sm:text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{details.feedback || "N/A"}</p>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Feedback Summary</span>
-                                                    <div className="bg-[#1c2128] border border-gray-800 rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1.5">Feedback Summary</span>
+                                                    <div className="bg-card border border-border-card rounded-2xl p-4 max-h-[100px] overflow-y-auto custom-scrollbar">
                                                         <p className="text-xs sm:text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{details.feedbackSummary || "N/A"}</p>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Photos/Drive Link</span>
-                                                    <div className="bg-[#1c2128] border border-gray-800 rounded-2xl p-4 flex items-center justify-between">
+                                                    <span className="text-[10px] font-bold text-muted uppercase tracking-widest block mb-1.5">Photos/Drive Link</span>
+                                                    <div className="bg-card border border-border-card rounded-2xl p-4 flex items-center justify-between">
                                                         {details.driveLink && details.driveLink !== "N/A" ? (
                                                             <a 
                                                                 href={details.driveLink.startsWith("http") ? details.driveLink : `https://${details.driveLink}`} 
@@ -1845,16 +1845,16 @@ export default function Dashboard() {
                                                                 {details.driveLink}
                                                             </a>
                                                         ) : (
-                                                            <span className="text-xs sm:text-sm text-gray-500">No link provided</span>
+                                                            <span className="text-xs sm:text-sm text-muted">No link provided</span>
                                                         )}
                                                     </div>
                                                 </div>
                                             </div>
                                         );
                                     })() : (
-                                        <div className="bg-[#1c2128]/30 border border-gray-800 border-dashed rounded-2xl p-6 text-center">
+                                        <div className="bg-card/30 border border-border-card border-dashed rounded-2xl p-6 text-center">
                                             <Clock className="text-red-500 mx-auto mb-2 animate-pulse" size={24} />
-                                            <p className="text-xs text-gray-500 font-medium">No execution report has been submitted for this event yet.</p>
+                                            <p className="text-xs text-muted font-medium">No execution report has been submitted for this event yet.</p>
                                             
                                             {!isCentral && (
                                                 <button
@@ -1863,7 +1863,7 @@ export default function Dashboard() {
                                                         setSelectedEventForReport(viewingReport.eventRaw);
                                                         setIsReportModalOpen(true);
                                                     }}
-                                                    className="mt-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-lg shadow-red-600/10"
+                                                    className="mt-4 bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 shadow-lg shadow-primary/10"
                                                 >
                                                     <Plus size={14} /> Submit Report Now
                                                 </button>
