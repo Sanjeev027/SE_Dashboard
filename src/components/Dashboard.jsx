@@ -34,6 +34,7 @@ import TaskBoard from "./TaskBoard";
 import { API_URL } from "../config";
 import { CustomSelect } from "./CustomSelect";
 import { getCampusColor, campusColorMapping } from "../utils/campusColors";
+import EventDrawer from "./EventDrawer";
 
 const getColorClasses = (color) => {
     const maps = {
@@ -223,11 +224,21 @@ export default function Dashboard() {
     }, []);
 
     // Form states
+    const [editingEventId, setEditingEventId] = useState(null);
+    const [selectedEventDrawer, setSelectedEventDrawer] = useState(null);
     const [newTitle, setNewTitle] = useState("");
     const [newType, setNewType] = useState("Circular");
     const [newUniversity, setNewUniversity] = useState("");
     const [newEventDate, setNewEventDate] = useState("");
     const [newEventEndDate, setNewEventEndDate] = useState("");
+    const [newStartTime, setNewStartTime] = useState("");
+    const [newEndTime, setNewEndTime] = useState("");
+    const [newDescription, setNewDescription] = useState("");
+    const [newVenue, setNewVenue] = useState("");
+    const [newCoordinator, setNewCoordinator] = useState("");
+    const [newStatus, setNewStatus] = useState("Scheduled");
+    const [newPhotosLink, setNewPhotosLink] = useState("");
+    const [newRemarks, setNewRemarks] = useState("");
 
     // Report states
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -392,13 +403,48 @@ export default function Dashboard() {
         const dayStr = String(d.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${dayStr}`;
         
+        handleOpenAddModal(formattedDate);
+    };
+
+    const handleOpenAddModal = (dateStr) => {
+        const formattedDate = dateStr || new Date().toISOString().split("T")[0];
+        setEditingEventId(null);
+        setNewTitle("");
+        setNewType("Circular");
+        setNewStartTime("");
+        setNewEndTime("");
+        setNewDescription("");
+        setNewVenue("");
+        setNewCoordinator("");
+        setNewStatus("Scheduled");
+        setNewPhotosLink("");
+        setNewRemarks("");
         setNewEventDate(formattedDate);
         setNewEventEndDate(formattedDate);
         setNewUniversity(isCentral ? "All Universities" : user?.university || "");
         setIsEventModalOpen(true);
     };
 
-    const handleAddEvent = async () => {
+    const handleEditEvent = (event) => {
+        setEditingEventId(event.id);
+        setNewTitle(event.title);
+        setNewType(event.type);
+        setNewUniversity(event.university);
+        setNewEventDate(event.date.split('T')[0]);
+        setNewEventEndDate((event.end_date || event.date).split('T')[0]);
+        setNewStartTime(event.start_time || "");
+        setNewEndTime(event.end_time || "");
+        setNewDescription(event.description || "");
+        setNewVenue(event.venue || "");
+        setNewCoordinator(event.coordinator || "");
+        setNewStatus(event.status || "Scheduled");
+        setNewPhotosLink(event.photos_link || "");
+        setNewRemarks(event.remarks || "");
+        setIsEventModalOpen(true);
+        setSelectedEventDrawer(null); // Close drawer while editing
+    };
+
+    const handleSaveEvent = async () => {
         if (!newTitle.trim()) {
             alert("Please enter an event title");
             return;
@@ -416,8 +462,13 @@ export default function Dashboard() {
             return;
         }
 
-        if (!isCentral && newUniversity !== user.university) {
+        if (!isCentral && newUniversity !== user.university && newUniversity !== "All Universities") {
             alert("no access to add for this university");
+            return;
+        }
+
+        if (newStatus === "Cancelled" && !newRemarks.trim()) {
+            alert("Remarks are mandatory when cancelling an event.");
             return;
         }
 
@@ -435,13 +486,24 @@ export default function Dashboard() {
             university: newUniversity,
             date: newEventDate,
             end_date: newEventEndDate,
-            color: typeColors[newType] || "gray"
+            color: typeColors[newType] || "gray",
+            start_time: newStartTime,
+            end_time: newEndTime,
+            description: newDescription,
+            venue: newVenue,
+            coordinator: newCoordinator,
+            status: newStatus,
+            photos_link: newPhotosLink,
+            remarks: newRemarks,
         };
 
         try {
-            await axios.post(`${API_URL}/api/events`, eventData);
+            if (editingEventId) {
+                await axios.put(`${API_URL}/api/events/${editingEventId}`, eventData);
+            } else {
+                await axios.post(`${API_URL}/api/events`, eventData);
+            }
             fetchEvents();
-            setNewTitle("");
             setIsEventModalOpen(false);
         } catch (err) {
             alert("Error saving event");
@@ -1331,7 +1393,11 @@ export default function Dashboard() {
                                                             {dayEvents.slice(0, 3).map(event => {
                                                                 const colors = getColorClasses(getCampusColor(event.university));
                                                                 return (
-                                                                    <div key={event.id} className={`${colors.bg} border-l-2 ${colors.border} px-1 sm:px-1.5 py-0.5 rounded`}>
+                                                                    <div 
+                                                                        key={event.id} 
+                                                                        onClick={(e) => { e.stopPropagation(); setSelectedEventDrawer(event); }}
+                                                                        className={`${colors.bg} border-l-2 ${colors.border} px-1 sm:px-1.5 py-0.5 rounded cursor-pointer hover:opacity-80 transition-opacity`}
+                                                                    >
                                                                         <p className="text-[8px] sm:text-[10px] font-medium truncate text-gray-200">{event.title}</p>
                                                                     </div>
                                                                 );
@@ -1358,9 +1424,15 @@ export default function Dashboard() {
                                 </div>
                                 <div className="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar max-h-[350px] xl:max-h-none">
                                     {selectedDayEvents.length > 0 ? selectedDayEvents.map(event => (
-                                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} key={event.id} className="bg-[#1c2128] p-4 sm:p-5 rounded-2xl border border-gray-800 relative group">
+                                        <motion.div 
+                                            initial={{ opacity: 0, x: 20 }} 
+                                            animate={{ opacity: 1, x: 0 }} 
+                                            key={event.id} 
+                                            onClick={() => setSelectedEventDrawer(event)}
+                                            className="bg-[#1c2128] p-4 sm:p-5 rounded-2xl border border-gray-800 relative group cursor-pointer hover:border-gray-600 transition-colors"
+                                        >
                                             {(isCentral || event.university?.toLowerCase() === user?.university?.toLowerCase()) && (
-                                                <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }} className="absolute top-4 right-4 text-gray-600 hover:text-red-500 transition-colors opacity-100 xl:opacity-0 xl:group-hover:opacity-100 bg-transparent border-none"><Trash2 size={16} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }} className="absolute top-4 right-4 text-gray-600 hover:text-red-500 transition-colors opacity-100 xl:opacity-0 xl:group-hover:opacity-100 bg-transparent border-none z-10"><Trash2 size={16} /></button>
                                             )}
                                             <div className="flex flex-col gap-3">
                                                 {(() => {
@@ -1397,38 +1469,67 @@ export default function Dashboard() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEventModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
                         <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
                             <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">New Event</h3>
-                            <div className="space-y-6 mt-6 sm:mt-8">
+                            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">{editingEventId ? "Edit Event" : "New Event"}</h3>
+                            <div className="space-y-4 mt-6 sm:mt-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Title</label>
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Title *</label>
                                     <input autoFocus placeholder="Enter event title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm sm:text-base" />
                                 </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Date</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Date *</label>
                                         <CustomDatePicker value={newEventDate} onChange={setNewEventDate} />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Date</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Date *</label>
                                         <CustomDatePicker value={newEventEndDate} onChange={setNewEventEndDate} />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Time</label>
+                                        <input type="time" value={newStartTime} onChange={(e) => setNewStartTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Time</label>
+                                        <input type="time" value={newEndTime} onChange={(e) => setNewEndTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type</label>
+                                        <CustomSelect value={newType} onChange={setNewType} options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University</label>
+                                        <CustomSelect value={newUniversity} onChange={setNewUniversity} options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Venue / Link</label>
+                                        <input placeholder="Location" value={newVenue} onChange={(e) => setNewVenue(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Coordinator</label>
+                                        <input placeholder="Name" value={newCoordinator} onChange={(e) => setNewCoordinator(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type</label>
-                                    <CustomSelect 
-                                        value={newType} 
-                                        onChange={setNewType} 
-                                        options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} 
-                                    />
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Status</label>
+                                    <CustomSelect value={newStatus} onChange={setNewStatus} options={["Scheduled", "In Progress", "Completed", "Cancelled", "Postponed"]} />
                                 </div>
+                                {(newStatus === "Cancelled" || newStatus === "Postponed") && (
+                                    <div>
+                                        <label className={`text-[10px] font-bold uppercase mb-2 block tracking-widest ${newStatus === 'Cancelled' ? 'text-red-500' : 'text-orange-500'}`}>{newStatus} Remarks {newStatus === "Cancelled" && "*"}</label>
+                                        <textarea rows={2} placeholder="Reason..." value={newRemarks} onChange={(e) => setNewRemarks(e.target.value)} className={`w-full bg-[#1c2128] border rounded-2xl p-4 text-white outline-none text-sm resize-none ${newStatus === 'Cancelled' ? 'border-red-500/50 focus:border-red-500' : 'border-orange-500/50 focus:border-orange-500'}`} />
+                                    </div>
+                                )}
                                 <div>
-                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University</label>
-                                    <CustomSelect 
-                                        value={newUniversity} 
-                                        onChange={setNewUniversity} 
-                                        options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} 
-                                    />
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description</label>
+                                    <textarea rows={3} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none" />
                                 </div>
-                                <button onClick={handleAddEvent} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>
+                            </div>
+                            <div className="pt-6 mt-4 border-t border-gray-800">
+                                <button onClick={handleSaveEvent} className="w-full bg-red-600 py-4 sm:py-5 rounded-2xl font-bold text-white hover:bg-red-700 shadow-xl shadow-red-600/20 flex items-center justify-center gap-2 text-sm sm:text-base"><CheckCircle2 size={20} />Save Schedule</button>
                             </div>
                         </motion.div>
                     </div>
@@ -1678,6 +1779,18 @@ export default function Dashboard() {
                     </div>
                 )}
             </AnimatePresence>
+
+            <EventDrawer
+                isOpen={!!selectedEventDrawer}
+                event={selectedEventDrawer}
+                onClose={() => setSelectedEventDrawer(null)}
+                onEdit={() => handleEditEvent(selectedEventDrawer)}
+                onDelete={() => {
+                    handleDeleteEvent(selectedEventDrawer.id);
+                    setSelectedEventDrawer(null);
+                }}
+                onRefresh={fetchEvents}
+            />
         </div>
     );
 }

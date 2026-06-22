@@ -21,7 +21,12 @@ router.get("/", async (req, res) => {
 
 // Add a new event
 router.post("/", async (req, res) => {
-  const { title, type, university, date, end_date, color } = req.body;
+  const { 
+    title, type, university, date, end_date, color,
+    start_time, end_time, description, venue, coordinator,
+    status, photos_link, feedback_summary, attendance_count,
+    event_outcome, remarks, feedback_submitted
+  } = req.body;
 
   try {
     const { data, error } = await supabase
@@ -32,7 +37,11 @@ router.post("/", async (req, res) => {
         university,
         date,
         end_date: end_date || date,
-        color
+        color,
+        start_time, end_time, description, venue, coordinator,
+        status: status || 'Scheduled', photos_link, feedback_summary,
+        attendance_count, event_outcome, remarks,
+        feedback_submitted: feedback_submitted || false
       }])
       .select("id");
 
@@ -63,6 +72,29 @@ router.delete("/:id", async (req, res) => {
     res.json({ message: "Event deleted" });
   } catch (error) {
     console.error("Delete Event Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update an event
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from("events")
+      .update(updateData)
+      .eq("id", id);
+
+    if (error) {
+      console.error("Update Event Error:", error);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json({ message: "Event updated" });
+  } catch (error) {
+    console.error("Update Event Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
