@@ -21,12 +21,23 @@ router.get("/", async (req, res) => {
 
 // Add a new event
 router.post("/", async (req, res) => {
+  const role = req.headers["x-user-role"];
+  const userUniversity = req.headers["x-user-university"];
+
+  if (role !== "central_admin" && role !== "campus_admin") {
+    return res.status(403).json({ success: false, message: "Unauthorized access" });
+  }
+
   const { 
     title, type, university, date, end_date, color,
     start_time, end_time, description, venue, coordinator,
     status, photos_link, feedback_summary, attendance_count,
     event_outcome, remarks, feedback_submitted
   } = req.body;
+
+  if (role === "campus_admin" && userUniversity !== university) {
+    return res.status(403).json({ success: false, message: "Unauthorized access: Cannot create event for another campus" });
+  }
 
   try {
     const { data, error } = await supabase
@@ -59,6 +70,12 @@ router.post("/", async (req, res) => {
 
 // Delete an event
 router.delete("/:id", async (req, res) => {
+  const role = req.headers["x-user-role"];
+  
+  if (role !== "central_admin") {
+    return res.status(403).json({ success: false, message: "Unauthorized access" });
+  }
+
   const { id } = req.params;
 
   try {
@@ -78,10 +95,37 @@ router.delete("/:id", async (req, res) => {
 
 // Update an event
 router.put("/:id", async (req, res) => {
+  const role = req.headers["x-user-role"];
+  const userUniversity = req.headers["x-user-university"];
+
+  if (!role || role === "viewer") {
+    return res.status(403).json({ success: false, message: "Unauthorized access" });
+  }
+
   const { id } = req.params;
-  const updateData = req.body;
+  let updateData = req.body;
+
+  if (role === "event_coordinator") {
+    updateData = {
+      status: req.body.status,
+      remarks: req.body.remarks,
+      feedback_summary: req.body.feedback_summary,
+      attendance_count: req.body.attendance_count,
+      event_outcome: req.body.event_outcome,
+      photos_link: req.body.photos_link,
+      feedback_submitted: req.body.feedback_submitted
+    };
+    Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+  }
 
   try {
+    if (role !== "central_admin") {
+      const { data: existingEvent } = await supabase.from("events").select("university").eq("id", id).single();
+      if (!existingEvent || existingEvent.university !== userUniversity) {
+        return res.status(403).json({ success: false, message: "Unauthorized access: Campus mismatch" });
+      }
+    }
+
     const { data, error } = await supabase
       .from("events")
       .update(updateData)

@@ -101,7 +101,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
 
 
 
-const CustomDatePicker = ({ value, onChange, placeholder = "Select Date" }) => {
+const CustomDatePicker = ({ value, onChange, placeholder = "Select Date", disabled = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const datePickerRef = useRef(null);
     const [currentMonth, setCurrentMonth] = useState(value ? new Date(value) : new Date());
@@ -144,8 +144,8 @@ const CustomDatePicker = ({ value, onChange, placeholder = "Select Date" }) => {
     return (
         <div ref={datePickerRef} className="relative w-full">
             <div 
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none hover:border-red-600/50 focus:border-red-600 transition-colors text-sm sm:text-base flex justify-between items-center cursor-pointer select-none"
+                onClick={() => !disabled && setIsOpen(!isOpen)}
+                className={`w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-gray-300 outline-none transition-colors text-sm sm:text-base flex justify-between items-center select-none ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-red-600/50 focus:border-red-600"}`}
             >
                 <span>{value || placeholder}</span>
                 <CalendarIcon size={18} className={`transition-colors duration-300 ${isOpen ? "text-red-500" : "text-gray-500"}`} />
@@ -310,7 +310,7 @@ export default function Dashboard() {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
             setNewUniversity(parsedUser.university === "All Universities" ? "VGU" : parsedUser.university);
-            if (parsedUser.role !== "central") {
+            if (parsedUser.role !== "central_admin") {
                 setSelectedUniTab(parsedUser.university);
             }
             fetchEvents();
@@ -329,7 +329,7 @@ export default function Dashboard() {
                     localStorage.setItem("user", JSON.stringify(latestUser));
                     setUser(latestUser);
                     setNewUniversity(latestUser.university === "All Universities" ? "VGU" : latestUser.university);
-                    if (latestUser.role !== "central") {
+                    if (latestUser.role !== "central_admin") {
                         setSelectedUniTab(latestUser.university);
                     }
                 } catch (err) {
@@ -353,7 +353,7 @@ export default function Dashboard() {
 
             // Reset university choice to VGU if user is central admin, or to their assigned university for managers
             if (user) {
-                if (user.role === "central") {
+                if (user.role === "central_admin") {
                     setNewUniversity("VGU");
                 } else {
                     setNewUniversity(user.university);
@@ -362,7 +362,7 @@ export default function Dashboard() {
         }
     }, [isEventModalOpen, selectedDate, user]);
 
-    const isCentral = user?.role === "central";
+    const isCentral = user?.role === "central_admin";
 
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = [
@@ -507,25 +507,39 @@ export default function Dashboard() {
             remarks: newRemarks,
         };
 
+        const axiosConfig = {
+            headers: {
+                "x-user-role": user?.role,
+                "x-user-university": user?.university
+            }
+        };
+
         try {
             if (editingEventId) {
-                await axios.put(`${API_URL}/api/events/${editingEventId}`, eventData);
+                await axios.put(`${API_URL}/api/events/${editingEventId}`, eventData, axiosConfig);
             } else {
-                await axios.post(`${API_URL}/api/events`, eventData);
+                await axios.post(`${API_URL}/api/events`, eventData, axiosConfig);
             }
             fetchEvents();
             setIsEventModalOpen(false);
         } catch (err) {
-            alert("Error saving event");
+            alert(err.response?.data?.message || "Error saving event");
         }
     };
 
     const handleDeleteEvent = async (eventId) => {
+        const axiosConfig = {
+            headers: {
+                "x-user-role": user?.role,
+                "x-user-university": user?.university
+            }
+        };
+
         try {
-            await axios.delete(`${API_URL}/api/events/${eventId}`);
+            await axios.delete(`${API_URL}/api/events/${eventId}`, axiosConfig);
             fetchEvents();
         } catch (err) {
-            alert("Error deleting event");
+            alert(err.response?.data?.message || "Error deleting event");
         }
     };
 
@@ -1483,44 +1497,44 @@ export default function Dashboard() {
                             <div className="space-y-4 mt-6 sm:mt-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 <div>
                                     <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Event Title *</label>
-                                    <input autoFocus placeholder="Enter event title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm sm:text-base" />
+                                    <input autoFocus disabled={user?.role === "event_coordinator"} placeholder="Enter event title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Date *</label>
-                                        <CustomDatePicker value={newEventDate} onChange={setNewEventDate} />
+                                        <CustomDatePicker disabled={user?.role === "event_coordinator"} value={newEventDate} onChange={setNewEventDate} />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Date *</label>
-                                        <CustomDatePicker value={newEventEndDate} onChange={setNewEventEndDate} />
+                                        <CustomDatePicker disabled={user?.role === "event_coordinator"} value={newEventEndDate} onChange={setNewEventEndDate} />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Start Time</label>
-                                        <input type="time" value={newStartTime} onChange={(e) => setNewStartTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newStartTime} onChange={(e) => setNewStartTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">End Time</label>
-                                        <input type="time" value={newEndTime} onChange={(e) => setNewEndTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                        <input type="time" disabled={user?.role === "event_coordinator"} value={newEndTime} onChange={(e) => setNewEndTime(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-3 sm:p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Type *</label>
-                                        <CustomSelect value={newType} onChange={setNewType} options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} />
+                                        <CustomSelect disabled={user?.role === "event_coordinator"} value={newType} onChange={setNewType} options={["Circular", "Co-Circular", "Extra-Circular", "Cultural Activities", "Other"]} />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">University *</label>
-                                        <CustomSelect value={newUniversity} onChange={setNewUniversity} options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} />
+                                        <CustomSelect disabled={user?.role === "event_coordinator"} value={newUniversity} onChange={setNewUniversity} options={isCentral ? ["All Universities", "VGU", "SGU", "ADYPU"] : [user.university]} />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Venue / Link</label>
-                                        <input placeholder="Location" value={newVenue} onChange={(e) => setNewVenue(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                        <input placeholder="Location" disabled={user?.role === "event_coordinator"} value={newVenue} onChange={(e) => setNewVenue(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Coordinator</label>
-                                        <input placeholder="Name" value={newCoordinator} onChange={(e) => setNewCoordinator(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm" />
+                                        <input placeholder="Name" disabled={user?.role === "event_coordinator"} value={newCoordinator} onChange={(e) => setNewCoordinator(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm disabled:opacity-50 disabled:cursor-not-allowed" />
                                     </div>
                                 </div>
                                 <div>
@@ -1535,7 +1549,7 @@ export default function Dashboard() {
                                 )}
                                 <div>
                                     <label className="text-[10px] font-bold text-gray-500 uppercase mb-2 block tracking-widest">Description *</label>
-                                    <textarea rows={3} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none" />
+                                    <textarea rows={3} disabled={user?.role === "event_coordinator"} placeholder="Event details..." value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="w-full bg-[#1c2128] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:border-red-600 text-sm resize-none disabled:opacity-50 disabled:cursor-not-allowed" />
                                 </div>
                             </div>
                             <div className="pt-6 mt-4 border-t border-gray-800">

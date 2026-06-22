@@ -122,7 +122,7 @@ export default function UserManagement() {
                     <div>
                         <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">VGU Users</p>
                         <p className="text-xl sm:text-2xl font-black text-white">
-                            {users.filter(u => u.role === "manager" && u.university?.toLowerCase() === "vgu").length}
+                            {users.filter(u => u.role === "campus_admin" && u.university?.toLowerCase() === "vgu").length}
                         </p>
                     </div>
                     <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
@@ -134,7 +134,7 @@ export default function UserManagement() {
                     <div>
                         <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">SGU Users</p>
                         <p className="text-xl sm:text-2xl font-black text-white">
-                            {users.filter(u => u.role === "manager" && u.university?.toLowerCase() === "sgu").length}
+                            {users.filter(u => u.role === "campus_admin" && u.university?.toLowerCase() === "sgu").length}
                         </p>
                     </div>
                     <div className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-500">
@@ -146,7 +146,7 @@ export default function UserManagement() {
                     <div>
                         <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">ADYPU Users</p>
                         <p className="text-xl sm:text-2xl font-black text-white">
-                            {users.filter(u => u.role === "manager" && u.university?.toLowerCase() === "adypu").length}
+                            {users.filter(u => u.role === "campus_admin" && u.university?.toLowerCase() === "adypu").length}
                         </p>
                     </div>
                     <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500">
@@ -197,7 +197,7 @@ export default function UserManagement() {
                                             <CustomSelect
                                                 value={user.role}
                                                 onChange={(val) => handleUpdateUser(user.id, val, user.university)}
-                                                options={[{label: "PM/PMA", value: "manager"}, {label: "Admin", value: "central"}]}
+                                                options={[{label: "Central Admin", value: "central_admin"}, {label: "Campus Admin", value: "campus_admin"}, {label: "Coordinator", value: "event_coordinator"}, {label: "Viewer", value: "viewer"}]}
                                                 className="w-32"
                                                 padding="py-2.5 px-4"
                                                 textSize="text-sm font-bold"
@@ -206,7 +206,7 @@ export default function UserManagement() {
                                             />
                                         </td>
                                         <td className="p-6">
-                                            {user.role === 'central' ? (
+                                            {user.role === 'central_admin' ? (
                                                 <div className="flex items-center gap-2 text-amber-500 font-medium bg-amber-500/5 w-fit px-4 py-2.5 rounded-xl border border-amber-500/10 italic text-sm">
                                                     <Shield size={16} /> All Universities
                                                 </div>
@@ -288,7 +288,7 @@ export default function UserManagement() {
                                         <CustomSelect
                                             value={user.role}
                                             onChange={(val) => handleUpdateUser(user.id, val, user.university)}
-                                            options={[{label: "PM/PMA", value: "manager"}, {label: "Admin", value: "central"}]}
+                                            options={[{label: "Central Admin", value: "central_admin"}, {label: "Campus Admin", value: "campus_admin"}, {label: "Coordinator", value: "event_coordinator"}, {label: "Viewer", value: "viewer"}]}
                                             className="w-full"
                                             padding="py-2.5 px-4"
                                             textSize="text-sm font-bold"
@@ -298,7 +298,7 @@ export default function UserManagement() {
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">Organization</label>
-                                        {user.role === 'central' ? (
+                                        {user.role === 'central_admin' ? (
                                             <div className="flex items-center gap-2 text-amber-500 font-medium bg-[#1c2128] w-full px-4 py-2.5 rounded-xl border border-amber-500/10 italic text-sm">
                                                 <Shield size={16} /> All Universities
                                             </div>

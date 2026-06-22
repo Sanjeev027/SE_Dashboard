@@ -5,7 +5,7 @@ import { getCampusColor, campusColorMapping } from "../utils/campusColors";
 import { API_URL } from "../config";
 import axios from "axios";
 
-export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, onRefresh }) {
+export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, onRefresh, user }) {
     const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
     const [feedbackData, setFeedbackData] = useState({
         feedback_summary: "",
@@ -42,6 +42,11 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
             await axios.put(`${API_URL}/api/events/${event.id}`, {
                 ...feedbackData,
                 feedback_submitted: true
+            }, {
+                headers: {
+                    "x-user-role": user?.role,
+                    "x-user-university": user?.university
+                }
             });
             setIsSubmittingFeedback(false);
             onRefresh();
@@ -77,12 +82,16 @@ export default function EventDrawer({ isOpen, onClose, event, onEdit, onDelete, 
                                     {event.university}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <button onClick={onEdit} className="p-2 bg-[#1c2128] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors">
-                                        <Edit2 size={16} />
-                                    </button>
-                                    <button onClick={onDelete} className="p-2 bg-[#1c2128] hover:bg-red-500/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors">
-                                        <Trash2 size={16} />
-                                    </button>
+                                    {(user?.role === 'central_admin' || (user?.role === 'campus_admin' && user?.university === event.university) || user?.role === 'event_coordinator') && (
+                                        <button onClick={onEdit} className="p-2 bg-[#1c2128] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors">
+                                            <Edit2 size={16} />
+                                        </button>
+                                    )}
+                                    {user?.role === 'central_admin' && (
+                                        <button onClick={onDelete} className="p-2 bg-[#1c2128] hover:bg-red-500/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors">
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
                                     <button onClick={onClose} className="p-2 bg-[#1c2128] hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors ml-2">
                                         <X size={16} />
                                     </button>

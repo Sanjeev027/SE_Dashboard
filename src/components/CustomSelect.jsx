@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-export const CustomSelect = ({ value, onChange, options, placeholder = "Select Option", className = "", padding = "p-4", textSize = "text-sm sm:text-base", dropdownPadding = "py-3 px-4", dropdownTextSize = "text-sm sm:text-base" }) => {
+export const CustomSelect = ({ value, onChange, options, placeholder = "Select Option", className = "", padding = "p-4", textSize = "text-sm sm:text-base", dropdownPadding = "py-3 px-4", dropdownTextSize = "text-sm sm:text-base", disabled = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const selectRef = useRef(null);
 
@@ -19,8 +19,8 @@ export const CustomSelect = ({ value, onChange, options, placeholder = "Select O
     return (
         <div ref={selectRef} className={`relative w-full ${className}`}>
             <div 
-                onClick={() => setIsOpen(!isOpen)}
-                className={`w-full bg-[#1c2128] border border-gray-800 rounded-2xl ${padding} text-gray-300 outline-none hover:border-red-600/50 focus:border-red-600 transition-colors ${textSize} flex justify-between items-center cursor-pointer select-none`}
+                onClick={() => !disabled && setIsOpen(!isOpen)}
+                className={`w-full bg-[#1c2128] border border-gray-800 rounded-2xl ${padding} text-gray-300 outline-none transition-colors ${textSize} flex justify-between items-center select-none ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-red-600/50 focus:border-red-600"}`}
             >
                 <span className="capitalize truncate pr-2">{value || placeholder}</span>
                 <ChevronDown size={18} className={`shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-red-500" : "text-gray-500"}`} />
