@@ -1321,22 +1321,25 @@ export default function Dashboard() {
                                     {calendarDays.map((day, idx) => {
                                         const dateStr = getDateString(day);
                                         const isSelected = dateStr === selectedDateString;
-                                        const isToday = day === new Date().getDate() && currentDate.getMonth() === new Date().getMonth();
+                                        const isToday = day === new Date().getDate() && currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear();
                                         const dayEvents = filterEvents(events[dateStr]);
 
                                         return (
                                             <div 
                                                 key={idx} 
                                                 onClick={() => handleDateClick(day)} 
-                                                className={`bg-[#1c2128] min-h-[70px] sm:min-h-[110px] p-1 sm:p-2 transition-all cursor-pointer border-t border-gray-800 flex flex-col hover:bg-white/5 ${
-                                                    isSelected ? 'ring-2 ring-inset ring-red-600/50 bg-red-600/5' : ''
+                                                className={`min-h-[70px] sm:min-h-[110px] p-1 sm:p-2 transition-all cursor-pointer border-t flex flex-col relative overflow-hidden hover:bg-white/5 ${
+                                                    isToday ? 'bg-red-950/20 border-red-500/40 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]' : 'bg-[#1c2128] border-gray-800'
+                                                } ${
+                                                    isSelected ? 'ring-2 ring-inset ring-red-600/50 bg-red-600/10' : ''
                                                 }`}
                                             >
+                                                {isToday && <div className="absolute top-0 left-0 w-full h-1 bg-red-500" />}
                                                 {day && (
                                                     <>
-                                                        <div className="flex justify-start mb-1 sm:mb-2">
+                                                        <div className="flex justify-start mb-1 sm:mb-2 relative z-10">
                                                             <span className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-[10px] sm:text-xs font-bold ${
-                                                                isToday ? 'bg-red-600 text-white' : isSelected ? 'bg-white/10 text-white' : 'text-gray-500'
+                                                                isToday ? 'bg-red-600 text-white shadow-md shadow-red-600/40' : isSelected ? 'bg-white/10 text-white' : 'text-gray-500'
                                                             }`}>{day}</span>
                                                         </div>
                                                         <div className="space-y-1">
