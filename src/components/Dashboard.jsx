@@ -211,7 +211,7 @@ export default function Dashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedUniTab, setSelectedUniTab] = useState("All Universities");
     const [selectedUniTypeFilter, setSelectedUniTypeFilter] = useState("All");
-    const [calendarUniFilter, setCalendarUniFilter] = useState("All");
+    const [calendarUniFilter, setCalendarUniFilter] = useState("All Universities");
     const [calendarTypeFilter, setCalendarTypeFilter] = useState("All");
     const [expandedUnis, setExpandedUnis] = useState({});
 
@@ -466,10 +466,10 @@ export default function Dashboard() {
         if (!dayEvents) return [];
         let filtered = dayEvents;
         if (!isCentral) {
-            filtered = filtered.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase());
+            filtered = filtered.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase() || e.university === "All Universities");
         }
-        if (calendarUniFilter !== "All") {
-            filtered = filtered.filter(e => e.university === calendarUniFilter);
+        if (calendarUniFilter !== "All Universities") {
+            filtered = filtered.filter(e => e.university === calendarUniFilter || e.university === "All Universities");
         }
         if (calendarTypeFilter !== "All") {
             filtered = filtered.filter(e => e.type === calendarTypeFilter);
@@ -1181,7 +1181,7 @@ export default function Dashboard() {
                                                 onChange={(e) => setCalendarUniFilter(e.target.value)} 
                                                 className="bg-[#161b22] border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
                                             >
-                                                <option value="All">All Universities</option>
+                                                <option value="All Universities">All Universities</option>
                                                 <option value="VGU">VGU</option>
                                                 <option value="SGU">SGU</option>
                                                 <option value="ADYPU">ADYPU</option>
