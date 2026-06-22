@@ -397,6 +397,12 @@ export default function Dashboard() {
         if (!day) return;
         const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         setSelectedDate(d);
+    };
+
+    const handleDateDoubleClick = (day) => {
+        if (!day) return;
+        const d = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        setSelectedDate(d);
 
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -1379,6 +1385,7 @@ export default function Dashboard() {
                                             <div 
                                                 key={idx} 
                                                 onClick={() => handleDateClick(day)} 
+                                                onDoubleClick={() => handleDateDoubleClick(day)}
                                                 className={`min-h-[70px] sm:min-h-[110px] p-1 sm:p-2 transition-all cursor-pointer border-t flex flex-col relative overflow-hidden hover:bg-white/5 ${
                                                     isToday ? 'bg-red-950/20 border-red-500/40 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]' : 'bg-[#1c2128] border-gray-800'
                                                 } ${
