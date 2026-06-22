@@ -1,35 +1,22 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const router = express.Router();
 
-// Ensure temp directory exists
-const tempDir = path.join(__dirname, "../temp");
-if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
-}
-
-// Configure multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, tempDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
-});
-
+// Configure multer to use memory storage for serverless environments (Vercel)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // POST /api/upload/sop
 router.post("/sop", upload.single("sopDocument"), async (req, res) => {
     try {
+        if (req.file) {
+            // Memory storage doesn't require manual cleanup
+        }
         if (!req.file && !req.body.sopUrl) {
             return res.status(400).json({ message: "No document provided" });
         }
 
-        const documentUrl = req.file ? `/temp/${req.file.filename}` : req.body.sopUrl;
+        const documentUrl = req.file ? `memory://${req.file.originalname}` : req.body.sopUrl;
 
         // TODO: Replace this mock implementation with actual LLM API call (OpenAI/Gemini)
         // 1. If req.file, parse text using pdf-parse or mammoth
