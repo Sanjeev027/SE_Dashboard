@@ -1468,7 +1468,6 @@ export default function Dashboard() {
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEventModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
                         <motion.div initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 20, opacity: 0 }} className="relative z-10 bg-[#161b22] border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-6 sm:p-10 shadow-2xl">
-                            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">New Event</h3>
                             <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">{editingEventId ? "Edit Event" : "New Event"}</h3>
                             <div className="space-y-4 mt-6 sm:mt-8 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 <div>
