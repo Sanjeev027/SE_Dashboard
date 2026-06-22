@@ -1229,10 +1229,7 @@ export default function Dashboard() {
                                                             return start <= monthEndStr && end >= monthStartStr;
                                                         });
 
-                                                    if (isCentral) {
-                                                        return uniqueEvents.length;
-                                                    }
-                                                    return uniqueEvents.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase() || e.university === "All Universities").length;
+                                                    return filterEvents(uniqueEvents).length;
                                                 })()}
                                             </p>
                                         </div>
@@ -1264,11 +1261,7 @@ export default function Dashboard() {
                                                             return start <= monthEndStr && end >= monthStartStr;
                                                         });
 
-                                                    if (isCentral) {
-                                                        return uniqueEvents.filter(e => e.date.split('T')[0] <= todayStr).length;
-                                                    }
-                                                    const filtered = uniqueEvents.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase() || e.university === "All Universities");
-                                                    return filtered.filter(e => e.date.split('T')[0] <= todayStr).length;
+                                                    return filterEvents(uniqueEvents).filter(e => e.date.split('T')[0] <= todayStr).length;
                                                 })()}
                                             </p>
                                         </div>
@@ -1290,15 +1283,7 @@ export default function Dashboard() {
                                                             self.findIndex(e => e.id === event.id) === index
                                                         );
 
-                                                    if (isCentral) {
-                                                        return uniqueEvents.filter(e => {
-                                                            const start = e.date.split('T')[0];
-                                                            const end = (e.end_date || e.date).split('T')[0];
-                                                            return todayStr >= start && todayStr <= end;
-                                                        }).length;
-                                                    }
-                                                    const filtered = uniqueEvents.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase() || e.university === "All Universities");
-                                                    return filtered.filter(e => {
+                                                    return filterEvents(uniqueEvents).filter(e => {
                                                         const start = e.date.split('T')[0];
                                                         const end = (e.end_date || e.date).split('T')[0];
                                                         return todayStr >= start && todayStr <= end;
