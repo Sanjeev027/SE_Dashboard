@@ -211,6 +211,8 @@ export default function Dashboard() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedUniTab, setSelectedUniTab] = useState("All Universities");
     const [selectedUniTypeFilter, setSelectedUniTypeFilter] = useState("All");
+    const [calendarUniFilter, setCalendarUniFilter] = useState("All");
+    const [calendarTypeFilter, setCalendarTypeFilter] = useState("All");
     const [expandedUnis, setExpandedUnis] = useState({});
 
     // Theme state
@@ -462,8 +464,17 @@ export default function Dashboard() {
 
     const filterEvents = (dayEvents) => {
         if (!dayEvents) return [];
-        if (isCentral) return dayEvents;
-        return dayEvents.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase());
+        let filtered = dayEvents;
+        if (!isCentral) {
+            filtered = filtered.filter(e => e.university?.toLowerCase() === user?.university?.toLowerCase());
+        }
+        if (calendarUniFilter !== "All") {
+            filtered = filtered.filter(e => e.university === calendarUniFilter);
+        }
+        if (calendarTypeFilter !== "All") {
+            filtered = filtered.filter(e => e.type === calendarTypeFilter);
+        }
+        return filtered;
     };
 
     const getLocalDateStr = (date) => {
@@ -1160,18 +1171,38 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                {/* Campus Legend */}
-                                <div className="flex flex-wrap items-center gap-3 mb-6 sm:mb-8 bg-[#1c2128]/50 p-3 sm:p-4 rounded-xl border border-gray-800 backdrop-blur-sm">
-                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mr-2">Campus Legend:</span>
-                                    {Object.entries(campusColorMapping).map(([campus, color]) => {
-                                        const c = getColorClasses(color);
-                                        return (
-                                            <div key={campus} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${c.bg} ${c.borderLight}`}>
-                                                <div className={`w-2 h-2 rounded-full ${c.border.replace('border-', 'bg-')}`} />
-                                                <span className={`text-[10px] font-bold uppercase tracking-wide ${c.text}`}>{campus}</span>
-                                            </div>
-                                        );
-                                    })}
+                                {/* Calendar Filters */}
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6 sm:mb-8 bg-[#1c2128]/50 p-4 rounded-xl border border-gray-800 backdrop-blur-sm">
+                                    {isCentral && (
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">University</label>
+                                            <select 
+                                                value={calendarUniFilter} 
+                                                onChange={(e) => setCalendarUniFilter(e.target.value)} 
+                                                className="bg-[#161b22] border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
+                                            >
+                                                <option value="All">All Universities</option>
+                                                <option value="VGU">VGU</option>
+                                                <option value="SGU">SGU</option>
+                                                <option value="ADYPU">ADYPU</option>
+                                            </select>
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-2">
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Event Type</label>
+                                        <select 
+                                            value={calendarTypeFilter} 
+                                            onChange={(e) => setCalendarTypeFilter(e.target.value)} 
+                                            className="bg-[#161b22] border border-gray-700 text-gray-300 text-xs rounded-lg px-2 py-1 outline-none focus:border-red-500 transition-colors"
+                                        >
+                                            <option value="All">All Types</option>
+                                            <option value="Circular">Circular</option>
+                                            <option value="Co-Circular">Co-Circular</option>
+                                            <option value="Extra-Circular">Extra-Circular</option>
+                                            <option value="Cultural Activities">Cultural Activities</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {/* Stats Counter Grid */}
